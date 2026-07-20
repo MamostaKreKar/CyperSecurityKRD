@@ -1,1 +1,814 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyper Security Platform</title>
+    <style>
+        :root {
+            --primary-blue: #0055ff;
+            --primary-red: #ff003c;
+            --bg-dark: #0a0f1d;
+            --panel-bg: rgba(15, 23, 42, 0.85);
+            --text-light: #f1f5f9;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text-light);
+            overflow-x: hidden;
+            height: 100vh;
+        }
+
+        /* Animated Background Gradients */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(125deg, #0a0f1d, #050b14, #1a0505, #051429);
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Glassmorphism Containers */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: var(--panel-bg);
+            border: 2px solid transparent;
+            border-image: linear-gradient(to right, var(--primary-blue), var(--primary-red)) 1;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(12px);
+            width: 100%;
+            max-width: 450px;
+            padding: 40px;
+            border-radius: 4px;
+            text-align: center;
+            position: relative;
+        }
+
+        .logo-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-red);
+            box-shadow: 0 0 15px var(--primary-red);
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 15px var(--primary-red); }
+            50% { transform: scale(1.05); box-shadow: 0 0 25px var(--primary-blue); border-color: var(--primary-blue); }
+            100% { transform: scale(1); box-shadow: 0 0 15px var(--primary-red); }
+        }
+
+        .dev-ticker {
+            font-size: 0.9rem;
+            color: #ffaa00;
+            font-weight: bold;
+            height: 20px;
+            margin-bottom: 15px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #cbd5e1;
+            font-size: 0.9rem;
+        }
+
+        .input-group input, .input-group select, .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 6px;
+            outline: none;
+            transition: 0.3s;
+            text-align: left;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 8px rgba(0, 85, 255, 0.5);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(to right, var(--primary-blue), var(--primary-red));
+            border: none;
+            color: white;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .switch-mode {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .switch-mode span {
+            color: var(--primary-blue);
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        /* Dashboard Layout (Discord Style) */
+        .dashboard {
+            display: none;
+            height: 100vh;
+            grid-template-columns: 60px 240px 1fr 300px;
+        }
+
+        /* Server Sidebar */
+        .server-sidebar {
+            background: #040814;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 15px;
+            gap: 12px;
+            border-left: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .server-icon {
+            width: 45px;
+            height: 45px;
+            background: #1e293b;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
+            font-size: 0.8rem;
+            overflow: hidden;
+        }
+
+        .server-icon:hover, .server-icon.active {
+            border-radius: 15px;
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        /* Channel Sidebar */
+        .channel-sidebar {
+            background: #090f1f;
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .sidebar-header {
+            padding: 15px;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .channel-list {
+            padding: 10px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .channel-item {
+            padding: 8px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 4px;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .channel-item:hover, .channel-item.active {
+            background: rgba(255,255,255,0.05);
+            color: white;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            background: #0d1527;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .content-header {
+            padding: 15px;
+            background: #090f1f;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .view-section {
+            display: none;
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        /* Chat System */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .messages-box {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .message {
+            background: rgba(255,255,255,0.02);
+            padding: 10px 15px;
+            border-radius: 8px;
+            border-right: 3px solid var(--primary-blue);
+        }
+        .message .author {
+            font-weight: bold;
+            color: var(--primary-blue);
+            margin-bottom: 4px;
+            font-size: 0.9rem;
+        }
+        .chat-input-area {
+            padding: 20px;
+            background: #090f1f;
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Right Sidebar (Economy & Profile Info) */
+        .right-sidebar {
+            background: #090f1f;
+            border-right: 1px solid rgba(255,255,255,0.05);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .economy-card, .profile-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        /* Rules UI */
+        .rules-text {
+            white-space: pre-line;
+            line-height: 1.8;
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Pricing Cards */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        .price-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .price-card.premium {
+            border-color: var(--primary-red);
+            box-shadow: 0 0 10px rgba(255,0,60,0.2);
+        }
+
+        /* Utility classes */
+        .flex-btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .btn-secondary {
+            background: #334155;
+        }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animation"></div>
+
+    <!-- ================= AUTHENTICATION PORTAL ================= -->
+    <div class="auth-container" id="authPortal">
+        <div class="auth-card">
+            <!-- لۆگۆی دیاریکراو -->
+            <img src="logo.png" alt="Cyper Security Logo" class="logo-img">
+            <div class="dev-ticker" id="devTicker"></div>
+            
+            <h2 id="authTitle" style="margin-bottom: 20px;">چوونە ژوورەوە</h2>
+
+            <form id="authForm" onsubmit="handleAuth(event)">
+                <div class="input-group">
+                    <label>ئیمێڵ</label>
+                    <input type="text" id="authEmail" placeholder="example@domain.com" required>
+                </div>
+                <div class="input-group">
+                    <label>پاسۆرد</label>
+                    <input type="password" id="authPassword" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn" id="authBtn">چوونە ژوورەوە</button>
+            </form>
+
+            <div class="switch-mode" id="switchModeText">
+                ئەکاونتت نییە؟ <span onclick="toggleAuthMode(true)">دروستی بکە</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MAIN CORE DASHBOARD ================= -->
+    <div class="dashboard" id="mainDashboard">
+        
+        <!-- 1. Server Sidebar -->
+        <div class="server-sidebar">
+            <div class="server-icon active" onclick="switchView('mainChat')">🌐</div>
+            <div id="customServersList"></div>
+            <div class="server-icon" style="color: #22c55e;" onclick="openCreateServerModal()">+</div>
+        </div>
+
+        <!-- 2. Channel Sidebar -->
+        <div class="channel-sidebar">
+            <div class="sidebar-header">
+                <span id="currentServerName">کۆمەڵگەی سەرەکی</span>
+            </div>
+            <div class="channel-list" id="channelListContainer">
+                <div class="channel-item active" onclick="switchView('mainChat')"># چاتی گشتی</div>
+                <div class="channel-item" onclick="switchView('rulesSection')">📜 یاساکان</div>
+                <div class="channel-item" onclick="switchView('cyperPlanSection')">💎 کڕینی Cyper</div>
+                <div class="channel-item" onclick="switchView('supportSection')">🛠️ پشتگیری (Support)</div>
+                <div class="channel-item" onclick="switchView('reportSection')">🚨 تۆمارکردنی ڕیپۆرت</div>
+                <div class="channel-item" style="color:#ef4444;" onclick="openAdminAuth()">🔑 Report KreKar</div>
+            </div>
+        </div>
+
+        <!-- 3. Main Content Dynamics -->
+        <div class="main-content">
+            <div class="content-header">
+                <h3 id="mainContentTitle">چاتی گشتی</h3>
+                <button class="btn" style="width:auto; padding: 6px 15px;" onclick="logout()">چوونە دەرەوە</button>
+            </div>
+
+            <!-- VIEW: Chat -->
+            <div id="mainChat" class="view-section active">
+                <div class="chat-container">
+                    <div class="messages-box" id="chatMessages">
+                        <div class="message"><div class="author">سیستەم</div>بەخێرهاتی بۆ Cyper Security Platform!</div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chatInputField" placeholder="نامەیەک بنووسە..." style="flex:1; padding:10px; background:#1e293b; border:none; color:white; border-radius:4px;">
+                        <button class="btn" style="width:auto;" onclick="sendChatMessage()">ناردن</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: Rules -->
+            <div id="rulesSection" class="view-section">
+                <div class="rules-text">
+                    👑 یاسا فەرمییەکانی سایبەر سکورێتی| Official Rules 👑
+
+                    🎩 سڵاو و ڕێز بۆ ئێوەی بەڕێز و خاوەن شکۆ،
+                    بەخێربێن بۆ "سایبەر سکۆرێتی کوردستا" (Kurdistan Cyper Security) — لوتکە و مەکۆی سەرەکی تەکنۆلۆژیا، ئاسایشی دیجیتاڵی، و پێگەیاندنی هاکەرە ئەخلاقییەکان (Ethical Hackers).
+                    
+                    1️⃣ ⚜️ ڕێزگرتن و پاراستنی شکۆ (Respect & Honor)
+                    ڕێزگرتن لە سەرجەم ئەندامان و بەڕێوبەران لە سەرووی هەموو شتێکەوەیە. هەر جۆرە بێڕێزییەک، قسەی نەشیاو، یاسای باندبوونی هەمیشەیی بەدوای خۆیدا دەهێنێت.
+                    
+                    2️⃣ 🛡️ هاکی ئەخلاقی و ئاسایشی نیشتمانی (Ethical Hacking)
+                    ئەم سێرڤەرە تەنها بۆ فێربوونی سپی (White Hat) و پاراستنی زانیارییە. بەکارهێنانی زانیارییەکان بۆ زیانگەیاندن هێڵی سوورە.
+                    
+                    3️⃣ 🔗 بڵاوکردنەوەی فایلی زیانبەخش (No Malware)
+                    ناردنی هەر جۆرە ڤایرۆسێک، ڕات (RAT)، یان لینکی فیشینگ بە توندی قەدەغەیە.
+                    
+                    [لینکی فەرمی دیسکۆرد بۆ جۆین بوون]: https://discord.gg/cypersecurity
+                </div>
+            </div>
+
+            <!-- VIEW: Cyper Pricing -->
+            <div id="cyperPlanSection" class="view-section">
+                <h2>پلانی تایبەتی Cyper کڕین</h2>
+                <p>بۆ کڕین، پێویستە بڕی پارەی دیاریکراو بنێریت بۆ ئەم ژمارەیە: <strong style="color:#22c55e;">07700809355</strong> (سویچ / زەین کاش)</p>
+                <div class="pricing-grid">
+                    <div class="price-card">
+                        <h3>پلانی مانگانە</h3>
+                        <p style="font-size: 1.5rem; margin:10px 0; color:var(--primary-blue);">9,000 دینار</p>
+                        <button class="btn" onclick="purchasePlan('مانگانە')">داواکردن</button>
+                    </div>
+                    <div class="price-card premium">
+                        <h3>پلانی ساڵانە</h3>
+                        <p style="font-size: 1.5rem; margin:10px 0; color:var(--primary-red);">90,000 دینار</p>
+                        <button class="btn" onclick="purchasePlan('ساڵانە')">داواکردن</button>
+                    </div>
+                </div>
+                <div style="margin-top:20px;" class="price-card">
+                    <h3>Server Boost 🚀</h3>
+                    <p>سێرڤەرەکەت بەرزبکەرەوە و تایبەتمەندی نوێ بەدەستبهێنە</p>
+                    <button class="btn" style="background:#ec4899; margin-top:10px;" onclick="buyBoost()">کڕینی بووست (٥ دینار)</button>
+                </div>
+            </div>
+
+            <!-- VIEW: Support -->
+            <div id="supportSection" class="view-section">
+                <h2>بەشی پشتگیری (Support)</h2>
+                <p style="margin-bottom:15px; color:#94a3b8;">کێشەکەت بنووسە بۆ ئەوەی ڕاستەوخۆ بنێردرێت بۆ diarygamer87@gmail.com</p>
+                <div class="input-group">
+                    <label>نامە و کێشەکەت</label>
+                    <textarea id="supportMsg" rows="4" placeholder="کێشەکەت لێرە بنووسە..."></textarea>
+                </div>
+                <button class="btn" onclick="submitSupport()">ناردنی نامەی پشتگیری</button>
+            </div>
+
+            <!-- VIEW: Report Submissions -->
+            <div id="reportSection" class="view-section">
+                <h2>تۆمارکردنی ڕیپۆرت (Report)</h2>
+                <div class="input-group">
+                    <label>جۆری ڕیپۆرت</label>
+                    <select id="reportType">
+                        <option value="user">ڕیپۆرت لەسەر ئەکاونت</option>
+                        <option value="server">ڕیپۆرت لەسەر سێرڤەر</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>ناوی ئەکاونت / سێرڤەری مەبەست</label>
+                    <input type="text" id="reportTarget" placeholder="ناو بنووسە">
+                </div>
+                <div class="input-group">
+                    <label>هۆکاری ڕیپۆرت</label>
+                    <textarea id="reportReason" placeholder="هۆکارەکەی بنووسە..."></textarea>
+                </div>
+                <button class="btn" style="background:var(--primary-red);" onclick="submitReport()">تۆمارکردنی ڕیپۆرت</button>
+            </div>
+
+            <!-- VIEW: Admin Panel (Report KreKar) -->
+            <div id="adminPanelSection" class="view-section">
+                <h2 style="color: #ef4444;">مێزی بەڕێوەبردنی ڕیپۆرتەکان (Report KreKar)</h2>
+                <div id="adminReportsList" style="margin-top:20px;"></div>
+            </div>
+        </div>
+
+        <!-- 4. User Profile & Settings Panel -->
+        <div class="right-sidebar">
+            <div class="profile-card">
+                <h4>پڕۆفایلی کەسی</h4>
+                <p style="margin-top:10px;">ئیمێڵ: <span id="profEmail" style="color:var(--primary-blue)">-</span></p>
+                <p>پلانی تایبەت: <span id="profPlan" style="color:#e2e8f0">ئاسایی</span></p>
+            </div>
+
+            <div class="economy-card">
+                <h4>گەنجینە و ئابووری</h4>
+                <p style="font-size:1.3rem; margin:10px 0; color:#eab308;"><span id="walletBalance">0</span> دینار</p>
+                <button class="btn" style="font-size:0.85rem;" onclick="claimDailyReward()">وەرگرتنی دیاری ڕۆژانە (٥ دینار)</button>
+            </div>
+
+            <div class="profile-card">
+                <h4>ڕێکخستنەکان (Settings)</h4>
+                <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+                    <button class="btn btn-secondary" style="font-size:0.8rem;" onclick="changePassword()">گۆڕینی پاسۆرد</button>
+                    <button class="btn btn-secondary" style="font-size:0.8rem; background:#dc2626;" onclick="disableAccount()">ناچالاککردنی ئەکاونت</button>
+                    <button class="btn btn-secondary" style="font-size:0.8rem; background:#7f1d1d;" onclick="deleteAccount()">سڕینەوەی هەمیشەیی ئەکاونت</button>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <h4>سیستەمی بلۆک</h4>
+                <input type="text" id="blockUserEmail" placeholder="ئیمێڵی کەسەکە" style="width:100%; padding:6px; margin:5px 0; background:#1e293b; color:white; border:none; border-radius:4px;">
+                <button class="btn btn-secondary" style="font-size:0.8rem; width:100%;" onclick="blockUser()">بلۆککردن</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= JAVASCRIPT LOGIC CORE ================= -->
+    <script>
+        // Data Store (Imitating Database using LocalStorage)
+        let users = JSON.parse(localStorage.getItem('cyper_users')) || {};
+        let currentUser = null;
+        let reports = JSON.parse(localStorage.getItem('cyper_reports')) || [];
+        let isSignUpMode = false;
+
+        // Dev KreKar Ticker Animation
+        setInterval(() => {
+            const ticker = document.getElementById('devTicker');
+            ticker.innerText = ticker.innerText === "Dev KreKar" ? "" : "Dev KreKar";
+        }, 120000); // ٢ خولەک جارێک لێدەدات و لای دەبات
+        document.getElementById('devTicker').innerText = "Dev KreKar"; 
+
+        // Dynamic Mode Switcher (Login / Signup)
+        function toggleAuthMode(isSignUp) {
+            isSignUpMode = isSignUp;
+            document.getElementById('authTitle').innerText = isSignUp ? "دروستکردنی ئەکاونتی نوێ" : "چوونە ژوورەوە";
+            document.getElementById('authBtn').innerText = isSignUp ? "تۆمارکردن" : "چوونە ژوورەوە";
+            document.getElementById('switchModeText').innerHTML = isSignUp ? 
+                `ئەکاونتت هەیە؟ <span onclick="toggleAuthMode(false)">لۆگین بکە</span>` : 
+                `ئەکاونتت نییە؟ <span onclick="toggleAuthMode(true)">دروستی بکە</span>`;
+        }
+
+        // Email Verification Helper
+        function isValidEmail(email) {
+            const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            const fakeDomains = ['test.com', 'fake.com', 'temp.com', 'mailinator.com', 'xyz.com'];
+            if (!re.test(email)) return false;
+            const domain = email.split('@')[1];
+            return !fakeDomains.includes(domain);
+        }
+
+        // Authentication Submission
+        function handleAuth(e) {
+            e.preventDefault();
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value;
+
+            if (!isValidEmail(email)) {
+                alert("تکایە ئیمێڵێکی دروست و فەرمی بنووسە! ئیمێڵی فەیک ڕێگەپێنەدراوە.");
+                return;
+            }
+
+            if (isSignUpMode) {
+                if (users[email]) {
+                    alert("ئەم ئیمێڵە پێشتر تۆمارکراوە!");
+                    return;
+                }
+                // Create User Object
+                users[email] = {
+                    email: email,
+                    password: password,
+                    balance: 10, // لە کاتی دروستکردن دەستبەجێ ١0 دینار وەردەگرێت
+                    lastClaim: 0,
+                    plan: 'ئاسایی',
+                    disabled: false,
+                    blockedUsers: []
+                };
+                localStorage.setItem('cyper_users', JSON.stringify(users));
+                alert("ئەکاونتەکەت بە سەرکەوتوویی دروستکرا! ئێستا لۆگین بکە.");
+                toggleAuthMode(false);
+            } else {
+                // Login Flow
+                const user = users[email];
+                if (!user || user.password !== password) {
+                    alert("ئیمێڵ یان پاسۆرد هەڵەیە!");
+                    return;
+                }
+                if (user.disabled) {
+                    alert("ئەم ئەکاونتە ناچالاک کراوە!");
+                    return;
+                }
+                currentUser = user;
+                launchDashboard();
+            }
+        }
+
+        // Dashboard Initialization
+        function launchDashboard() {
+            document.getElementById('authPortal').style.display = 'none';
+            document.getElementById('mainDashboard').style.display = 'grid';
+            updateProfileUI();
+        }
+
+        function updateProfileUI() {
+            if (!currentUser) return;
+            document.getElementById('profEmail').innerText = currentUser.email;
+            document.getElementById('profPlan').innerText = currentUser.plan;
+            document.getElementById('walletBalance').innerText = currentUser.balance;
+        }
+
+        // View Switcher inside dashboard
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(view => view.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            
+            // Set header titles dynamically
+            const titles = {
+                'mainChat': 'چاتی گشتی',
+                'rulesSection': 'یاسا فەرمییەکان',
+                'cyperPlanSection': 'سیستەمی پلان و بووست',
+                'supportSection': 'پشتیگیری تەکنیکی',
+                'reportSection': 'ناردنی ڕیپۆرت',
+                'adminPanelSection': 'KreKar Admin View'
+            };
+            document.getElementById('mainContentTitle').innerText = titles[viewId] || 'سەکۆ';
+        }
+
+        // Daily Claim System (24h check)
+        function claimDailyReward() {
+            const now = Date.now();
+            const oneDay = 24 * 60 * 60 * 1000;
+            if (now - currentUser.lastClaim < oneDay) {
+                const timeLeft = oneDay - (now - currentUser.lastClaim);
+                const hours = Math.floor(timeLeft / (60 * 60 * 1000));
+                alert(`تکایە چاوەڕێ بکە! پاداشتی داهاتوو دوای ${hours} کاتژمێری تر کراوە دەبێت.`);
+                return;
+            }
+            currentUser.balance += 5;
+            currentUser.lastClaim = now;
+            users[currentUser.email] = currentUser;
+            localStorage.setItem('cyper_users', JSON.stringify(users));
+            updateProfileUI();
+            alert("پیرۆزە! ٥ دیناری ڕۆژانە خرایە سەر حسابت.");
+        }
+
+        // Discord Mock Server Customizer
+        function openCreateServerModal() {
+            const sName = prompt("ناوی سێرڤەرەکەت بنووسە:");
+            if (!sName) return;
+            const serverIconContainer = document.getElementById('customServersList');
+            const newIcon = document.createElement('div');
+            newIcon.className = 'server-icon';
+            newIcon.innerText = sName.substring(0, 2).toUpperCase();
+            newIcon.onclick = function() {
+                document.querySelectorAll('.server-icon').forEach(i => i.classList.remove('active'));
+                newIcon.classList.add('active');
+                document.getElementById('currentServerName').innerText = sName;
+                alert(`چوویتە ناو سێرڤەری: ${sName}`);
+            };
+            serverIconContainer.appendChild(newIcon);
+        }
+
+        // Chat Submission
+        function sendChatMessage() {
+            const field = document.getElementById('chatInputField');
+            if (!field.value.trim()) return;
+            const box = document.getElementById('chatMessages');
+            const newMsg = document.createElement('div');
+            newMsg.className = 'message';
+            newMsg.innerHTML = `<div class="author">${currentUser.email}</div>${field.value}`;
+            box.appendChild(newMsg);
+            box.scrollTop = box.scrollHeight;
+            field.value = "";
+        }
+
+        // Support Simulation
+        function submitSupport() {
+            const msg = document.getElementById('supportMsg').value;
+            if (!msg.trim()) return alert("تکایە نامەیەک بنووسە.");
+            alert(`نامەکەت بۆ diarygamer87@gmail.com نێردرا. تکایە چاوەڕێ بە تاوەکو لەلایەن بەڕێوبەرایەتییەوە وەڵام دەدرێیتەوە!`);
+            document.getElementById('supportMsg').value = '';
+        }
+
+        // Reports Action Flow
+        function submitReport() {
+            const type = document.getElementById('reportType').value;
+            const target = document.getElementById('reportTarget').value;
+            const reason = document.getElementById('reportReason').value;
+
+            if(!target || !reason) return alert("تکایە خانەکان پڕبکەرەوە.");
+
+            reports.push({ type, target, reason, reportedBy: currentUser.email });
+            localStorage.setItem('cyper_reports', JSON.stringify(reports));
+            alert("ڕیپۆرتەکەت بە سەرکەوتوویی بۆ KreKar تۆمارکرا.");
+            document.getElementById('reportTarget').value = '';
+            document.getElementById('reportReason').value = '';
+        }
+
+        // Secure Admin View Auth
+        function openAdminAuth() {
+            const phone = prompt("ژمارەی مۆبایلی فەرمی ئەدمین داخڵ بکە:");
+            const code = prompt("کۆدی نهێنی KreKar بنووسە:");
+
+            if (phone === "07700809355" && code === "2233") {
+                switchView('adminPanelSection');
+                renderAdminReports();
+            } else {
+                alert("زانیارییەکان هەڵەن! ئەکاونتەکەت بە هۆکاری پاراستنی ئاسایش بلۆک دەکرێت.");
+                logout();
+            }
+        }
+
+        function renderAdminReports() {
+            const container = document.getElementById('adminReportsList');
+            container.innerHTML = '';
+            if(reports.length === 0) container.innerHTML = '<p>هیچ ڕیپۆرتێک نییە.</p>';
+            reports.forEach((rep, index) => {
+                container.innerHTML += `
+                    <div class="message" style="border-right-color:var(--primary-red); margin-bottom:10px;">
+                        <strong>جۆر: ${rep.type} | ئامانج: ${rep.target}</strong>
+                        <p>هۆکار: ${rep.reason}</p>
+                        <small>ناردراوە لەلایەن: ${rep.reportedBy}</small>
+                        <br><button class="btn" style="width:auto; padding:3px 10px; margin-top:5px; background:red;" onclick="deleteReport(${index})">سڕینەوەی ڕیپۆرت</button>
+                    </div>`;
+            });
+        }
+
+        function deleteReport(index) {
+            reports.splice(index, 1);
+            localStorage.setItem('cyper_reports', JSON.stringify(reports));
+            renderAdminReports();
+        }
+
+        // Purchase Systems
+        function purchasePlan(planName) {
+            alert(`داواکاری کڕینی پلانی ${planName} نێردرا. تکایە دڵنیابەوە لە ناردنی پارە بۆ ژمارەی 07700809355 پاشان چالاک دەبێت.`);
+        }
+
+        function buyBoost() {
+            if(currentUser.balance < 5) return alert("دیناری پێویستت نییە بۆ کڕینی بووست!");
+            currentUser.balance -= 5;
+            users[currentUser.email] = currentUser;
+            localStorage.setItem('cyper_users', JSON.stringify(users));
+            updateProfileUI();
+            alert("🚀 سێرڤەرەکە بە سەرکەوتوویی بووستان بۆ ئەنجامدرا!");
+        }
+
+        // Settings Actions
+        function changePassword() {
+            const newPass = prompt("پاسۆردە نوێیەکەت بنووسە:");
+            if(!newPass) return;
+            currentUser.password = newPass;
+            users[currentUser.email] = currentUser;
+            localStorage.setItem('cyper_users', JSON.stringify(users));
+            alert("پاسۆردەکەت بە سەرکەوتوویی گۆڕدرا.");
+        }
+
+        function disableAccount() {
+            if(confirm("دڵنیای لە ناچالاککردنی ئەکاونتەکەت؟")) {
+                currentUser.disabled = true;
+                users[currentUser.email] = currentUser;
+                localStorage.setItem('cyper_users', JSON.stringify(users));
+                logout();
+            }
+        }
+
+        function deleteAccount() {
+            if(confirm("ئایا دڵنیای لە سڕینەوەی هەمیشەیی ئەکاونتەکەت؟ ئەم کارە ناگەڕێتەوە.")) {
+                delete users[currentUser.email];
+                localStorage.setItem('cyper_users', JSON.stringify(users));
+                logout();
+            }
+        }
+
+        function blockUser() {
+            const target = document.getElementById('blockUserEmail').value.trim();
+            if(!target) return;
+            currentUser.blockedUsers.push(target);
+            alert(`کەسی خاوەن ئیمێڵی ${target} بە سەرکەوتوویی بلۆک کرا.`);
+            document.getElementById('blockUserEmail').value = '';
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('mainDashboard').style.display = 'none';
+            document.getElementById('authPortal').style.display = 'flex';
+        }
+    </script>
+</body>
+</html>
