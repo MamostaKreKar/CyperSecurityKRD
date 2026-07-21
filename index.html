@@ -42,18 +42,20 @@
 
         /* Navigation Bar (Hidden by default until login) */
         nav {
-            display: none; /* پێش داخڵبوون شاراوەیە */
-            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(10px);
             border-bottom: 2px solid var(--primary-red);
-            padding: 15px 30px;
+            padding: 15px 25px;
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 0 15px rgba(255, 0, 85, 0.3);
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         nav h1 {
-            font-size: 22px;
+            font-size: 20px;
             background: linear-gradient(to right, var(--primary-blue), var(--primary-red));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -63,17 +65,19 @@
         .nav-btns {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            flex-wrap: wrap;
         }
 
         .nav-btns button {
             background: transparent;
             border: 1px solid var(--primary-blue);
             color: white;
-            padding: 8px 14px;
-            border-radius: 5px;
+            padding: 7px 12px;
+            border-radius: 6px;
             cursor: pointer;
             transition: 0.3s;
+            font-size: 13px;
         }
 
         .nav-btns button:hover {
@@ -134,7 +138,7 @@
             outline: none;
         }
 
-        input:focus {
+        input:focus, textarea:focus {
             border-color: var(--primary-blue);
             box-shadow: 0 0 8px rgba(0, 210, 255, 0.5);
         }
@@ -163,6 +167,12 @@
 
         .btn-red:hover {
             box-shadow: 0 0 15px var(--primary-red);
+        }
+
+        .btn:disabled {
+            background: #444;
+            cursor: not-allowed;
+            box-shadow: none;
         }
 
         /* Profile & Banner */
@@ -218,15 +228,17 @@
 </head>
 <body>
 
-    <!-- Header Navigation (تەنها دوای چوونەژوورەوە دەرەکەوێت) -->
+    <!-- Header Navigation (جیاکراوەتەوە بەشەکان) -->
     <nav id="main-nav">
         <h1>پلاتفۆرمی پرۆفیشناڵ</h1>
         <div class="nav-btns">
             <div class="coin-badge">💰 <span id="user-coins">0</span> دینار</div>
             <button onclick="switchView('profile-section')">پڕۆفایل</button>
             <button onclick="switchView('chat-section')">چات و ڤۆیس</button>
-            <button onclick="switchView('market-section')">بازاڕ و نایترۆ</button>
-            <button onclick="switchView('support-section')">پشتگیری و ڕاپۆرت</button>
+            <button onclick="switchView('daily-section')">💰 وەرگرتنی دینار</button>
+            <button onclick="switchView('market-section')">🛒 بازاڕ و نایترۆ</button>
+            <button onclick="switchView('support-section')">🛠️ پشتیوانی</button>
+            <button onclick="switchView('report-section')">🚨 ڕاپۆرت</button>
             <button onclick="switchView('owner-section')">بەشی تایبەت</button>
             <button onclick="logout()" style="border-color: var(--primary-red); color: var(--primary-red);">دەربازبوون</button>
         </div>
@@ -234,7 +246,7 @@
 
     <div class="container">
 
-        <!-- AUTHENTICATION SECTION (تەنها ئەم بەشە دیارە پێش چوونەژوورەوە) -->
+        <!-- AUTHENTICATION SECTION -->
         <div id="auth-section" class="view-section active-view card">
             <h2>بەخێربێیت! تکایە داخڵ ببه یان ئەکاونت دروست بکە</h2>
             <hr style="margin: 10px 0; border-color: rgba(255,255,255,0.1);">
@@ -251,7 +263,7 @@
                 </p>
             </div>
 
-            <!-- Register Form (Create Account) -->
+            <!-- Register Form -->
             <div id="register-box" style="display: none;">
                 <h3>دروستکردنی ئەکاونت (Create Account)</h3>
                 <input type="text" id="reg-user" placeholder="ناوی بەکارهێنەر (Username)">
@@ -263,7 +275,7 @@
                 </p>
             </div>
 
-            <!-- Verification Code Modal (تەنها بۆ بەشی Create Account) -->
+            <!-- Verification Code Modal -->
             <div id="verify-box" style="display: none; margin-top: 15px;">
                 <h4 style="color: var(--primary-blue);">کۆدی ئاسایشی ئیمێڵەکەت بنووسە:</h4>
                 <p style="font-size: 12px; color: #aaa; margin-bottom: 5px;">(کۆدی سەلماندن نێردرا بۆ ئیمێڵەکەت)</p>
@@ -347,17 +359,20 @@
             </div>
         </div>
 
-        <!-- 3. MARKET & DAILY REWARD & NITRO SECTION -->
-        <div id="market-section" class="view-section card">
-            <h2>بازاڕ و کۆکردنەوەی کۆین و نایترۆ</h2>
-
-            <!-- Daily Reward -->
-            <div style="background: rgba(0,210,255,0.1); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                <h3>دیاری ڕۆژانە (Daily Reward)</h3>
-                <p>هەموو ڕۆژێک کاتژمێر 8:00ی بەیانی دەتوانیت ٥٠٠ دینار بۆ هەژمارەکەت وەربگریت.</p>
-                <button class="btn" onclick="claimDailyReward()">وەرگرتنی ٥٠٠ دینار 💰</button>
-                <p id="reward-status" style="margin-top: 5px; color: var(--primary-blue);"></p>
+        <!-- 3. DAILY COIN SECTION (بەشی جیاواز بۆ دینار وەرگرتن بە 24 کاتژمێر جارێک) -->
+        <div id="daily-section" class="view-section card">
+            <h2>💰 بەشی دیاری و وەرگرتنی دینار</h2>
+            <div style="background: rgba(0,210,255,0.1); padding: 20px; border-radius: 8px; text-align: center; margin-top: 15px;">
+                <h3 style="color: var(--gold-coin); font-size: 24px;">خەڵاتی 24 کاتژمێری</h3>
+                <p style="margin: 10px 0;">تەنها ٢٤ کاتژمێر جارێک دەتوانیت ٥٠٠ دیناری بەخۆڕایی وەربگریت.</p>
+                <button class="btn" id="claim-btn" onclick="claimDailyReward()">وەرگرتنی ٥٠٠ دینار 💰</button>
+                <h4 id="reward-timer" style="margin-top: 15px; color: var(--primary-red);"></h4>
             </div>
+        </div>
+
+        <!-- 4. MARKET & NITRO SECTION (بەشی جیاوازی بازاڕ) -->
+        <div id="market-section" class="view-section card">
+            <h2>🛒 بازاڕ و کڕینی سێرڤەر و نایترۆ</h2>
 
             <!-- Server Creation & Boost -->
             <h3>کڕینی سێرڤەر و بووست</h3>
@@ -392,37 +407,32 @@
             </div>
         </div>
 
-        <!-- 4. SUPPORT & REPORT SECTION -->
+        <!-- 5. SUPPORT SECTION (بەشی جیاواز بۆ پشتیوانی) -->
         <div id="support-section" class="view-section card">
-            <h2>پشتگیری & ڕاپۆرت</h2>
-
-            <!-- Support -->
-            <div style="margin-bottom: 20px;">
-                <h3>بەشی پشتیوانی (Support)</h3>
-                <input type="text" id="supp-name" placeholder="ناوی تۆ">
-                <textarea id="supp-reason" placeholder="هۆکارەکە بنووسە..."></textarea>
-                <button class="btn" onclick="submitSupport()">ناردن بۆ Support</button>
-            </div>
-
-            <hr style="margin: 20px 0; border-color: rgba(255,255,255,0.1);">
-
-            <!-- Report -->
-            <div>
-                <h3>بەشی ڕاپۆرت (Report)</h3>
-                <input type="text" id="rep-target" placeholder="ناوی ئەو کەسەی ڕاپۆرتی لەسەر دەدەیت">
-                <textarea id="rep-reason" placeholder="هۆکاری ڕاپۆرت..."></textarea>
-                <label>وێنەی بەڵگە (Proof Image URL):</label>
-                <input type="text" id="rep-proof" placeholder="لینکی وێنەی بەڵگە">
-                <button class="btn btn-red" onclick="submitReport()">ناردنی ڕاپۆرت</button>
-            </div>
+            <h2>🛠️ بەشی پشتیوانی (Support)</h2>
+            <p style="margin-bottom: 15px; color: #aaa;">ئەگەر کێشەیەک یان پرسیارێکت هەیە لێرە بۆمان بنووسە:</p>
+            <input type="text" id="supp-name" placeholder="ناوی تۆ">
+            <textarea id="supp-reason" placeholder="هۆکار یان کێشەکەت بنووسە..." rows="4"></textarea>
+            <button class="btn" onclick="submitSupport()">ناردن بۆ Support</button>
         </div>
 
-        <!-- 5. OWNER SECTION (شاراوە لەبەرچاوان) -->
+        <!-- 6. REPORT SECTION (بەشی جیاواز بەتەنها بۆ ڕاپۆرت) -->
+        <div id="report-section" class="view-section card">
+            <h2>🚨 بەشی ڕاپۆرت (Report)</h2>
+            <p style="margin-bottom: 15px; color: #aaa;">ڕاپۆرت لەسەر سەرپێچیکاران بنێرە بە بەڵگەوە:</p>
+            <input type="text" id="rep-target" placeholder="ناوی ئەو کەسەی ڕاپۆرتی لەسەر دەدەیت">
+            <textarea id="rep-reason" placeholder="هۆکاری ڕاپۆرتەکە بە وردی بنووسە..." rows="4"></textarea>
+            <label>وێنەی بەڵگە (Proof Image URL):</label>
+            <input type="text" id="rep-proof" placeholder="لینکی وێنەی بەڵگە">
+            <button class="btn btn-red" onclick="submitReport()">ناردنی ڕاپۆرت</button>
+        </div>
+
+        <!-- 7. OWNER SECTION -->
         <div id="owner-section" class="view-section card">
             <h2>بەشی تایبەت</h2>
             
             <div id="owner-login-box">
-                <p>کۆدی تایبەت ببنوسە بۆ چوونەژوورەوە:</p>
+                <p>کۆدی تایبەت بنووسە بۆ چوونەژوورەوە:</p>
                 <input type="password" id="owner-pin" placeholder="****">
                 <button class="btn btn-red" onclick="accessOwnerPanel()">پشکنین</button>
             </div>
@@ -447,12 +457,11 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // Data Stores
+        // Global Data Stores
         let failedAttempts = 0;
         let isBanned = false;
         let generatedCode = null;
         let currentUser = null;
-        let userCoins = 0;
 
         const db = {
             accounts: [],
@@ -469,6 +478,10 @@
             const views = document.querySelectorAll('.view-section');
             views.forEach(v => v.classList.remove('active-view'));
             document.getElementById(viewId).classList.add('active-view');
+
+            if(viewId === 'daily-section') {
+                checkRewardStatus();
+            }
         }
 
         function switchAuthMode(mode) {
@@ -522,14 +535,14 @@
                 return;
             }
 
-            // Generate Security Verification Code for Create Account
+            // Security Verification Code
             generatedCode = Math.floor(1000 + Math.random() * 9000);
             alert(`کۆدی ئاسایشی سەر ئیمێڵەکەت (سیمولەیشن): ${generatedCode}`);
             
             document.getElementById('register-box').style.display = 'none';
             document.getElementById('verify-box').style.display = 'block';
 
-            currentUser = { username, email, password, coins: 0, avatar: '', banner: '', bio: '' };
+            currentUser = { username, email, password, coins: 0, lastClaimTime: 0, avatar: '', banner: '', bio: '' };
         }
 
         function verifyAccount() {
@@ -537,8 +550,6 @@
             if(inputCode == generatedCode) {
                 alert("ئەکاونتەکەت بە سەرکەوتوویی دروستکرا!");
                 db.accounts.push(currentUser);
-                
-                // Direct Entry to the platform
                 enterPlatform();
             } else {
                 alert("کۆدەکە هەڵەیە!");
@@ -645,17 +656,37 @@
             alert(`کرداری ${action} بە سەرکەوتوویی ئەنجامدرا!`);
         }
 
-        // Daily Reward System
+        // 24-Hour Anti-Spam Daily Reward System
         function claimDailyReward() {
-            const now = new Date();
-            const hours = now.getHours();
+            const now = Date.now();
+            const cooldown = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
-            if (hours >= 8) {
+            if (now - (currentUser.lastClaimTime || 0) >= cooldown) {
                 currentUser.coins = (currentUser.coins || 0) + 500;
+                currentUser.lastClaimTime = now;
                 updateCoinDisplay();
-                document.getElementById('reward-status').innerText = "بڕی ٥٠٠ دینار زیادکرا بۆ ئامێری دارایت!";
+                alert("بڕی ٥٠٠ دینار زیادکرا بۆ باڵانسەکەت!");
+                checkRewardStatus();
             } else {
-                document.getElementById('reward-status').innerText = "تکایە کاتژمێر ٨:٠٠ی بەیانی وەرە بۆ وەرگرتنی دیاری.";
+                alert("تکایە چاوەڕێ بکە تا کاتژمێری دیاریکراو تەواو دەبێت!");
+            }
+        }
+
+        function checkRewardStatus() {
+            const now = Date.now();
+            const cooldown = 24 * 60 * 60 * 1000;
+            const btn = document.getElementById('claim-btn');
+            const timerText = document.getElementById('reward-timer');
+
+            if (currentUser && (now - (currentUser.lastClaimTime || 0) < cooldown)) {
+                btn.disabled = true;
+                const remainingTime = cooldown - (now - currentUser.lastClaimTime);
+                const hours = Math.floor(remainingTime / (1000 * 60 * 60));
+                const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+                timerText.innerText = `کاتی ماوە بۆ دیاری داهاتوو: ${hours} کاتژمێر و ${minutes} خولەک`;
+            } else {
+                if(btn) btn.disabled = false;
+                if(timerText) timerText.innerText = "ئێستا دەتوانیت دیارییەکە وەربگریت!";
             }
         }
 
@@ -686,19 +717,22 @@
             }
         }
 
-        // Support & Report Systems
+        // Support System
         function submitSupport() {
             const name = document.getElementById('supp-name').value;
             const reason = document.getElementById('supp-reason').value;
 
             if(name && reason) {
                 db.supports.push({ name, reason });
-                alert("داواکاری پشتیوانی نێردرا!");
+                alert("داواکاری پشتیوانی نێردرا بۆ بەشی Own Support!");
                 document.getElementById('supp-name').value = '';
                 document.getElementById('supp-reason').value = '';
+            } else {
+                alert("تکایە ناو و هۆکارەکەت بنووسە.");
             }
         }
 
+        // Report System
         function submitReport() {
             const target = document.getElementById('rep-target').value;
             const reason = document.getElementById('rep-reason').value;
@@ -706,14 +740,16 @@
 
             if(target && reason) {
                 db.reports.push({ target, reason, proof });
-                alert("ڕاپۆرتەکە نێردرا!");
+                alert("ڕاپۆرتەکە بە سەرکەوتوویی نێردرا بۆ بەشی Report Own!");
                 document.getElementById('rep-target').value = '';
                 document.getElementById('rep-reason').value = '';
                 document.getElementById('rep-proof').value = '';
+            } else {
+                alert("تکایە ناوی کەسەکە و هۆکاری ڕاپۆرت بنووسە.");
             }
         }
 
-        // Owner Access Logic (Protected PIN)
+        // Owner Access Logic (PIN Protected)
         function accessOwnerPanel() {
             const pin = document.getElementById('owner-pin').value;
             if(pin === "1122") {
