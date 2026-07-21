@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProBot Style Dashboard</title>
-    <!-- FontAwesome for Icons -->
+    <title>ProBot Responsive Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -14,7 +13,6 @@
             --input-bg: #14151c;
             --accent-purple: #5865f2;
             --accent-green: #22c55e;
-            --accent-amber: #f59e0b;
             --text-main: #f3f4f6;
             --text-muted: #9ca3af;
             --border-color: #2b2d3a;
@@ -35,7 +33,19 @@
             overflow-x: hidden;
         }
 
-        /* --- SIDEBAR --- */
+        /* --- MOBILE OVERLAY BACKGROUND --- */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 99;
+        }
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* --- SIDEBAR STYLE --- */
         .sidebar {
             width: 280px;
             background-color: var(--sidebar-bg);
@@ -43,32 +53,49 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            position: sticky;
+            position: fixed;
             top: 0;
-            flex-shrink: 0;
+            right: -280px; /* Hidden on Mobile by default */
+            transition: right 0.3s ease;
             z-index: 100;
+        }
+
+        .sidebar.open {
+            right: 0; /* Slide in on mobile */
         }
 
         .server-header {
             padding: 20px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: space-between;
             border-bottom: 1px solid var(--border-color);
-            background: rgba(0,0,0,0.1);
+        }
+
+        .server-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .server-avatar {
-            width: 42px;
-            height: 42px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #5865f2, #8b5cf6);
+            background: var(--accent-purple);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 18px;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(88, 101, 242, 0.3);
+        }
+
+        .close-sidebar-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 20px;
+            cursor: pointer;
+            display: block;
         }
 
         .sidebar-menu {
@@ -82,7 +109,6 @@
             color: var(--text-muted);
             margin: 15px 12px 8px;
             font-weight: 700;
-            letter-spacing: 0.5px;
             text-transform: uppercase;
         }
 
@@ -90,23 +116,18 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 14px;
+            padding: 12px 14px;
             color: var(--text-main);
             border-radius: 8px;
             margin-bottom: 4px;
             cursor: pointer;
             font-size: 14px;
-            transition: all 0.2s ease;
+            transition: 0.2s;
         }
 
-        .menu-item:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-
-        .menu-item.active {
+        .menu-item:hover, .menu-item.active {
             background-color: var(--accent-purple);
             color: white;
-            font-weight: 600;
         }
 
         .menu-item .left-part {
@@ -115,49 +136,41 @@
             gap: 12px;
         }
 
-        .badge-premium {
-            background: var(--accent-amber);
-            color: #000;
-            font-size: 10px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-
         .status-check {
             color: var(--accent-green);
             font-size: 13px;
         }
 
-        /* --- MAIN CONTENT --- */
+        /* --- MAIN CONTENT LAYOUT --- */
         .main-content {
             flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-            max-width: 1200px;
+            padding: 20px;
+            width: 100%;
         }
 
+        /* Top Header Navigation */
         .top-navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             background: var(--card-bg);
-            padding: 15px 25px;
+            padding: 12px 20px;
             border-radius: 12px;
             border: 1px solid var(--border-color);
         }
 
-        .user-info {
+        .menu-toggle-btn {
+            background: var(--accent-purple);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
             display: flex;
             align-items: center;
-            gap: 12px;
-        }
-
-        .user-info img {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
+            gap: 8px;
         }
 
         /* --- TAB PANELS --- */
@@ -171,151 +184,87 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
+            from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .panel-header {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 15px;
+            padding-bottom: 12px;
         }
 
-        .panel-header h2 {
-            font-size: 22px;
-            margin-bottom: 6px;
-        }
-
-        .panel-header p {
-            color: var(--text-muted);
-            font-size: 13px;
-        }
-
-        /* --- CARDS & FORMS --- */
-        .dashboard-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 170px;
-            transition: transform 0.2s;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-        }
+        .panel-header h2 { font-size: 20px; }
+        .panel-header p { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
 
         .config-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 24px;
+            padding: 20px;
             margin-bottom: 20px;
         }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+        .form-group { margin-bottom: 18px; }
 
         .form-group label {
             display: block;
             margin-bottom: 8px;
             font-size: 14px;
-            color: #d1d5db;
         }
 
         .form-control {
             width: 100%;
-            padding: 12px 14px;
+            padding: 10px 14px;
             background: var(--input-bg);
             border: 1px solid var(--border-color);
             border-radius: 8px;
             color: white;
             outline: none;
-            font-size: 14px;
-        }
-
-        .form-control:focus {
-            border-color: var(--accent-purple);
         }
 
         .btn-save {
             background: var(--accent-purple);
             color: white;
             border: none;
-            padding: 12px 24px;
+            padding: 10px 20px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 14px;
-            transition: opacity 0.2s;
         }
 
-        .btn-save:hover {
-            opacity: 0.9;
-        }
-
-        /* --- TOGGLE SWITCH --- */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 46px;
-            height: 24px;
-        }
-
-        .switch input { opacity: 0; width: 0; height: 0; }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #374151;
-            transition: .3s;
-            border-radius: 24px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px; width: 18px;
-            left: 3px; bottom: 3px;
-            background-color: white;
-            transition: .3s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider { background-color: var(--accent-green); }
-        input:checked + .slider:before { transform: translateX(22px); }
-
-        /* Embedded Live Preview Box */
-        .embed-preview {
-            border-right: 4px solid var(--accent-purple);
-            background: #14151c;
-            padding: 15px;
-            border-radius: 4px;
-            margin-top: 15px;
+        /* --- DESKTOP MEDIA QUERY (Laptops/PC) --- */
+        @media (min-width: 992px) {
+            .sidebar {
+                right: 0 !important; /* Always visible on PC */
+                position: sticky;
+            }
+            .menu-toggle-btn, .close-sidebar-btn {
+                display: none !important; /* Hide toggle button on desktop */
+            }
+            .sidebar-overlay {
+                display: none !important;
+            }
+            .main-content {
+                padding: 30px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- SIDEBAR NAVIGATION -->
-    <div class="sidebar">
+    <div class="sidebar-overlay" id="overlay" onclick="toggleMenu()"></div>
+
+    <div class="sidebar" id="sidebar">
         <div class="server-header">
-            <div class="server-avatar">PB</div>
-            <div>
-                <h4 style="font-size: 15px;">سێرڤەری سەرەکی</h4>
-                <span style="font-size: 11px; color: var(--text-muted);">ID: 105928374928</span>
+            <div class="server-info">
+                <div class="server-avatar"><i class="fa-solid fa-shield-halved"></i></div>
+                <div>
+                    <h4 style="font-size: 14px;">سێرڤەری من</h4>
+                    <span style="font-size: 11px; color: var(--text-muted);">کۆنترۆڵ کردنی بۆت</span>
+                </div>
             </div>
+            <button class="close-sidebar-btn" onclick="toggleMenu()"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
         <div class="sidebar-menu">
@@ -323,19 +272,19 @@
             
             <div class="menu-item active" onclick="switchTab('overview', this)">
                 <div class="left-part">
-                    <i class="fa-solid fa-chart-pie"></i>
+                    <i class="fa-solid fa-eye"></i>
                     <span>پیشاندانی گشتی</span>
                 </div>
             </div>
 
             <div class="menu-item" onclick="switchTab('server-settings', this)">
                 <div class="left-part">
-                    <i class="fa-solid fa-sliders"></i>
-                    <span>ڕێکخستنەکانی سێرڤەر</span>
+                    <i class="fa-solid fa-gear"></i>
+                    <span>سیستینگەکانی سێرڤەر</span>
                 </div>
             </div>
 
-            <div class="menu-category">ڕێکخستنی بەشەکان</div>
+            <div class="menu-category">ڕێکخستنەکان</div>
 
             <div class="menu-item" onclick="switchTab('general-cmds', this)">
                 <div class="left-part">
@@ -355,280 +304,152 @@
 
             <div class="menu-item" onclick="switchTab('auto-respond', this)">
                 <div class="left-part">
-                    <i class="fa-solid fa-reply"></i>
+                    <i class="fa-solid fa-paper-plane"></i>
                     <span>وەڵامدانەوەی خودکار</span>
-                </div>
-                <i class="fa-solid fa-circle-check status-check"></i>
-            </div>
-
-            <div class="menu-item" onclick="switchTab('embeds', this)">
-                <div class="left-part">
-                    <i class="fa-solid fa-envelope"></i>
-                    <span>نامە ئیمبەدەکان</span>
                 </div>
                 <i class="fa-solid fa-circle-check status-check"></i>
             </div>
 
             <div class="menu-item" onclick="switchTab('autorole', this)">
                 <div class="left-part">
-                    <i class="fa-solid fa-user-shield"></i>
+                    <i class="fa-solid fa-award"></i>
                     <span>ڕۆڵی ئۆتۆماتیکی</span>
                 </div>
                 <i class="fa-solid fa-circle-check status-check"></i>
             </div>
-
-            <div class="menu-category">پاراستن & ئاسایش</div>
-
-            <div class="menu-item" onclick="switchTab('antispam', this)">
-                <div class="left-part">
-                    <i class="fa-solid fa-shield-halved"></i>
-                    <span>دژە-سپام (Anti-Spam)</span>
-                </div>
-                <span class="badge-premium">پریمیۆم</span>
-            </div>
         </div>
     </div>
 
-    <!-- MAIN DISPLAY AREA -->
     <div class="main-content">
         
-        <!-- TOP NAVIGATION BAR -->
         <div class="top-navbar">
-            <div style="font-weight: 600; font-size: 16px;">
-                <i class="fa-solid fa-robot" style="color: var(--accent-purple);"></i> کۆنترۆڵ پەنێڵی بۆت
-            </div>
-            <div class="user-info">
-                <img src="https://cdn.discordapp.com/embed/avatars/0.png" alt="User">
-                <span style="font-size: 14px; font-weight: 500;">Developer#0001</span>
-            </div>
+            <button class="menu-toggle-btn" onclick="toggleMenu()">
+                <i class="fa-solid fa-bars"></i> منیو
+            </button>
+            <div style="font-weight: 600; font-size: 15px;">داشبۆردی بۆت</div>
         </div>
 
-        <!-- 1. OVERVIEW TAB -->
         <div id="tab-overview" class="tab-panel active">
             <div class="panel-header">
-                <h2>پیشاندانی گشتی (Overview)</h2>
-                <p>سەیرێکی خێرا بکه لە چالاکبوون یان ناچالاکبوونی بەشەکانی بۆت لەسەر سێرڤەرەکەت.</p>
+                <h2>پیشاندانی گشتی</h2>
+                <p>تایبەتمەندییە چالاکەکانی بۆت لەم بەشەوە دەربکەون.</p>
             </div>
-
-            <div class="dashboard-cards">
-                <div class="card">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <i class="fa-solid fa-hand-wave fa-lg" style="color:var(--accent-purple)"></i>
-                        <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
-                    </div>
-                    <h4>سیستەمی بەخێرهاتن</h4>
-                    <p style="font-size: 12px; color: var(--text-muted);">ناردنی نامەی بەخێرهاتنی ئۆتۆماتیکی بۆ ئەندامە نوێیەکان.</p>
-                </div>
-
-                <div class="card">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <i class="fa-solid fa-reply fa-lg" style="color:var(--accent-purple)"></i>
-                        <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
-                    </div>
-                    <h4>وەڵامدانەوەی خودکار</h4>
-                    <p style="font-size: 12px; color: var(--text-muted);">وەڵامدانەوەی خێرای چاتەکان بەپێی ووشەی دیاریکراو.</p>
-                </div>
-
-                <div class="card">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <i class="fa-solid fa-shield-halved fa-lg" style="color:var(--accent-purple)"></i>
-                        <label class="switch"><input type="checkbox"><span class="slider"></span></label>
-                    </div>
-                    <h4>دژە-سپام & لینک</h4>
-                    <p style="font-size: 12px; color: var(--text-muted);">ڕێگریکردن لە ناردنی لینکی ڕیکلام و سپامی دووبارە.</p>
-                </div>
+            <div class="config-card">
+                <p>بەخێربێیت بۆ کۆنترۆڵ پەنێڵ، یەکێک لە بەشەکانی منیو دیاری بکه بۆ دەستکاریکردن.</p>
             </div>
         </div>
 
-        <!-- 2. SERVER SETTINGS TAB -->
         <div id="tab-server-settings" class="tab-panel">
             <div class="panel-header">
                 <h2>ڕێکخستنەکانی سێرڤەر</h2>
-                <p>پێگر (Prefix) و زمانی بنەڕەتی بۆت لە سێرڤەردا بگۆڕە.</p>
+                <p>دەستکاری پێگر و بەشەکانی سێرڤەر بکە.</p>
             </div>
             <div class="config-card">
                 <div class="form-group">
-                    <label>پێگری بۆت (Bot Prefix)</label>
+                    <label>پێگری بۆت (Prefix)</label>
                     <input type="text" class="form-control" value="!">
                 </div>
-                <div class="form-group">
-                    <label>زمانی ئاخاوتنی بۆت</label>
-                    <select class="form-control">
-                        <option>کوردی (Kurdish)</option>
-                        <option>English</option>
-                        <option>العربية</option>
-                    </select>
-                </div>
-                <button class="btn-save">پاشەکەوتکردنی ڕێکخستنەکان</button>
+                <button class="btn-save">پاشەکەوتکردن</button>
             </div>
         </div>
 
-        <!-- 3. GENERAL COMMANDS TAB -->
         <div id="tab-general-cmds" class="tab-panel">
             <div class="panel-header">
-                <h2>فەرمانی گشتی (General Commands)</h2>
-                <p>چالاککردن یان ناچالاککردنی فەرمانە سەرەکییەکانی بۆت.</p>
+                <h2>فەرمانی گشتی</h2>
+                <p>چالاککردنی فەرمانەکان.</p>
             </div>
             <div class="config-card">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
-                    <div>
-                        <strong>فەرمانی profile!</strong>
-                        <p style="font-size: 12px; color: var(--text-muted);">پیشاندانی زانیاری پرۆفایلی بەکارهێنەر.</p>
-                    </div>
-                    <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
-                </div>
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <strong>فەرمانی avatar!</strong>
-                        <p style="font-size: 12px; color: var(--text-muted);">دابەزاندنی ڕەسمی پرۆفایل بە کوالیتی بەرز.</p>
-                    </div>
-                    <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
-                </div>
+                <p>کۆنترۆڵکردنی فەرمانە گشتییەکان.</p>
             </div>
         </div>
 
-        <!-- 4. WELCOME TAB -->
         <div id="tab-welcome" class="tab-panel">
             <div class="panel-header">
                 <h2>بەخێرهاتن & ماڵئاوایی</h2>
-                <p>دەقی پەیامی بەخێرهاتن و کەناڵی دیاریکراو دەستکاری بکە.</p>
+                <p>دیاریکردنی کەناڵ و دەقی پەیامی بەخێرهاتن.</p>
             </div>
             <div class="config-card">
                 <div class="form-group">
                     <label>کەناڵی بەخێرهاتن</label>
                     <select class="form-control">
-                        <option># welcome</option>
-                        <option># general</option>
+                        <option>#welcome</option>
+                        <option>#general</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>پەیامی بەخێرهاتن</label>
-                    <textarea class="form-control" rows="4">سڵاو [user]، بەخێربێیت بۆ سێرڤەری [server]!</textarea>
+                    <label>دەقی بەخێرهاتن</label>
+                    <textarea class="form-control" rows="3">بەخێربێیت!</textarea>
                 </div>
                 <button class="btn-save">زەخیرەکردن</button>
             </div>
         </div>
 
-        <!-- 5. AUTO RESPOND TAB -->
         <div id="tab-auto-respond" class="tab-panel">
             <div class="panel-header">
-                <h2>وەڵامدانەوەی خودکار (Auto Response)</h2>
-                <p>کۆماند و وەڵامی ڕاستەوخۆ دیاری بکە کاتێک کەسێک ووشەیەکی تایبەت دەنووسێت.</p>
+                <h2>وەڵامدانەوەی خودکار</h2>
+                <p>وەڵامی خێرا و ئۆتۆماتیکی دروست بکە.</p>
             </div>
             <div class="config-card">
                 <div class="form-group">
-                    <label>کاتێک ئەندامێک بنووسێت:</label>
-                    <input type="text" class="form-control" placeholder="نموونە: چۆنی">
+                    <label>ووشەی دیاریکراو:</label>
+                    <input type="text" class="form-control" placeholder="نموونە: سەلام">
                 </div>
                 <div class="form-group">
-                    <label>بۆت وەها وەڵام بداتەوە:</label>
-                    <input type="text" class="form-control" placeholder="نموونە: سوپاس بۆ خوا! تۆ چۆنیت؟">
+                    <label>وەڵامی بۆت:</label>
+                    <input type="text" class="form-control" placeholder="نموونە: عەلەیکم سەلام">
                 </div>
-                <button class="btn-save">زیادکردنی وەڵام</button>
+                <button class="btn-save">زیادکردن</button>
             </div>
         </div>
 
-        <!-- 6. EMBED MESSAGES TAB -->
-        <div id="tab-embeds" class="tab-panel">
-            <div class="panel-header">
-                <h2>دروستکەری نامەی ئیمبەد (Embed Builder)</h2>
-                <p>نامەی شێواز بەرز و چوارگۆشەیی (Embed) دروست بکە.</p>
-            </div>
-            <div class="config-card">
-                <div class="form-group">
-                    <label>ناوی سەردێڕ (Title)</label>
-                    <input type="text" class="form-control" id="embed-title-input" value="یاساکانی سێرڤەر" oninput="updateEmbedPreview()">
-                </div>
-                <div class="form-group">
-                    <label>ناوەڕۆکی نامە (Description)</label>
-                    <textarea class="form-control" id="embed-desc-input" rows="3" oninput="updateEmbedPreview()">تکایە ڕێز لە یاساکانی سێرڤەر بگرن.</textarea>
-                </div>
-                
-                <label>پێشاندانی ڕاستەوخۆ (Live Preview):</label>
-                <div class="embed-preview">
-                    <h4 id="embed-title-preview">یاساکانی سێرڤەر</h4>
-                    <p id="embed-desc-preview" style="font-size: 13px; color: var(--text-muted); margin-top: 5px;">تکایە ڕێز لە یاساکانی سێرڤەر بگرن.</p>
-                </div>
-                <br>
-                <button class="btn-save">ناردنی نامەکە</button>
-            </div>
-        </div>
-
-        <!-- 7. AUTO ROLE TAB -->
         <div id="tab-autorole" class="tab-panel">
             <div class="panel-header">
-                <h2>ڕۆڵی ئۆتۆماتیکی (Auto Role)</h2>
-                <p>بەخشینی ڕۆڵ بە شێوەیەکی ئۆتۆماتیکی بەو ئەندامانەی نوێ جۆین دەکەن.</p>
+                <h2>ڕۆڵی ئۆتۆماتیکی</h2>
+                <p>بەخشینی ڕۆڵ بە ئەندامی نوێ.</p>
             </div>
             <div class="config-card">
                 <div class="form-group">
-                    <label>دیاریکردنی ڕۆڵ بۆ ئەندامی نوێ</label>
+                    <label>ڕۆڵ</label>
                     <select class="form-control">
                         <option>Member</option>
-                        <option>Gamer</option>
-                        <option>VIP</option>
                     </select>
                 </div>
                 <button class="btn-save">پاشەکەوتکردن</button>
             </div>
         </div>
 
-        <!-- 8. ANTI-SPAM TAB -->
-        <div id="tab-antispam" class="tab-panel">
-            <div class="panel-header">
-                <h2>دژە-سپام (Anti-Spam)</h2>
-                <p>پاراستنی سێرڤەرەکەت لە شتە زیانبەخشەکان.</p>
-            </div>
-            <div class="config-card">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
-                    <div>
-                        <strong>بلۆککردنی لینک (Anti-Link)</strong>
-                        <p style="font-size: 12px; color: var(--text-muted);">ڕێگریکردن لە ناردنی لینکی دیسکۆرد و وێبسایتەکان.</p>
-                    </div>
-                    <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
-                </div>
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <strong>دژە-سپامی پەیامی خێرا (Anti-Mass Spam)</strong>
-                        <p style="font-size: 12px; color: var(--text-muted);">میوتکردنی خۆکارانەی ئەو کەسانەی پەیام زۆر دووبارە دەکەنەوە.</p>
-                    </div>
-                    <label class="switch"><input type="checkbox"><span class="slider"></span></label>
-                </div>
-            </div>
-        </div>
-
     </div>
 
-    <!-- JAVASCRIPT FOR DYNAMIC TAB SWITCHING -->
     <script>
-        function switchTab(tabName, element) {
-            // 1. Hide all tab panels
-            const panels = document.querySelectorAll('.tab-panel');
-            panels.forEach(panel => panel.classList.remove('active'));
-
-            // 2. Remove 'active' status from menu items
-            const menuItems = document.querySelectorAll('.menu-item');
-            menuItems.forEach(item => item.classList.remove('active'));
-
-            // 3. Activate current tab panel
-            const targetPanel = document.getElementById('tab-' + tabName);
-            if (targetPanel) {
-                targetPanel.classList.add('active');
-            }
-
-            // 4. Highlight active menu button
-            if (element) {
-                element.classList.add('active');
-            }
+        // Toggle Sidebar Menu on Mobile
+        function toggleMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
         }
 
-        // Live Embed Preview Updater
-        function updateEmbedPreview() {
-            const titleInput = document.getElementById('embed-title-input').value;
-            const descInput = document.getElementById('embed-desc-input').value;
+        // Switch Tabs dynamically & auto-close menu on Mobile
+        function switchTab(tabName, element) {
+            // Hide panels
+            const panels = document.querySelectorAll('.tab-panel');
+            panels.forEach(p => p.classList.remove('active'));
 
-            document.getElementById('embed-title-preview').innerText = titleInput || 'سەردێڕ';
-            document.getElementById('embed-desc-preview').innerText = descInput || 'ناوەڕۆکی نامە...';
+            // Remove active style from menu buttons
+            const items = document.querySelectorAll('.menu-item');
+            items.forEach(i => i.classList.remove('active'));
+
+            // Show target panel
+            const target = document.getElementById('tab-' + tabName);
+            if (target) target.classList.add('active');
+
+            // Set active class to menu item
+            if (element) element.classList.add('active');
+
+            // Close sidebar automatically on mobile click
+            if (window.innerWidth < 992) {
+                toggleMenu();
+            }
         }
     </script>
 </body>
