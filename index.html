@@ -1,20 +1,20 @@
 <!DOCTYPE html>
-<html lang="ku" dir="rtl">
+<html lang="ckb" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kurdistan Cyber Security Platform</title>
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>پلاتفۆرمی پرۆفیشناڵ</title>
     <style>
+        /* CSS Settings & Animated Background */
         :root {
-            --bg-color: #0d1117;
-            --card-bg: #161b22;
-            --accent-color: #00ffcc;
-            --accent-danger: #ff4757;
-            --accent-warning: #ffa500;
-            --text-color: #c9d1d9;
-            --border-color: #30363d;
+            --primary-blue: #00d2ff;
+            --dark-blue: #004080;
+            --primary-red: #ff0055;
+            --dark-red: #800020;
+            --bg-dark: #0a0d14;
+            --card-bg: rgba(16, 22, 36, 0.85);
+            --text-color: #ffffff;
+            --gold-coin: #ffd700;
         }
 
         * {
@@ -25,696 +25,726 @@
         }
 
         body {
-            background-color: var(--bg-color);
+            background: linear-gradient(-45deg, #0a0d14, #1a000c, #001329, #0a0d14);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
             color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
             min-height: 100vh;
-            padding: 20px;
+            display: flex;
+            flex-direction: column;
         }
 
-        .app-container {
-            width: 100%;
-            max-width: 900px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0, 255, 204, 0.1);
-            overflow: hidden;
-            position: relative;
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
-        .auth-card, .dashboard-section {
-            padding: 30px;
-            display: none;
+        /* Navigation Bar (Hidden by default until login) */
+        nav {
+            display: none; /* پێش داخڵبوون شاراوەیە */
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--primary-red);
+            padding: 15px 30px;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.3);
         }
 
-        .auth-card.active, .dashboard-section.active {
-            display: block;
+        nav h1 {
+            font-size: 22px;
+            background: linear-gradient(to right, var(--primary-blue), var(--primary-red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
         }
 
-        h2, h3 {
-            color: var(--accent-color);
-            margin-bottom: 20px;
-            text-align: center;
-            text-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+        .nav-btns {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 14px;
-        }
-
-        input, textarea, select {
-            width: 100%;
-            padding: 12px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            background: #0d1117;
-            color: #fff;
-            font-size: 14px;
-            outline: none;
+        .nav-btns button {
+            background: transparent;
+            border: 1px solid var(--primary-blue);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 5px;
+            cursor: pointer;
             transition: 0.3s;
         }
 
-        input:focus, textarea:focus {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 8px rgba(0, 255, 204, 0.4);
+        .nav-btns button:hover {
+            background: var(--primary-blue);
+            box-shadow: 0 0 10px var(--primary-blue);
+        }
+
+        .coin-badge {
+            background: rgba(255, 215, 0, 0.15);
+            border: 1px solid var(--gold-coin);
+            color: var(--gold-coin);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Container Layout */
+        .container {
+            max-width: 1100px;
+            margin: 20px auto;
+            padding: 20px;
+            width: 100%;
+            flex: 1;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid rgba(0, 210, 255, 0.2);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            backdrop-filter: blur(8px);
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 3px;
+            background: linear-gradient(to right, var(--primary-blue), var(--primary-red));
+        }
+
+        /* Form Inputs & Buttons */
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: white;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 8px rgba(0, 210, 255, 0.5);
         }
 
         .btn {
             width: 100%;
             padding: 12px;
-            background: var(--accent-color);
-            color: #000;
             border: none;
             border-radius: 6px;
             font-weight: bold;
             cursor: pointer;
+            background: linear-gradient(45deg, var(--dark-blue), var(--primary-blue));
+            color: white;
             transition: 0.3s;
             margin-top: 10px;
         }
 
         .btn:hover {
-            background: #00cca3;
-            box-shadow: 0 0 12px rgba(0, 255, 204, 0.6);
+            opacity: 0.9;
+            box-shadow: 0 0 15px var(--primary-blue);
         }
 
-        .btn-danger {
-            background: var(--accent-danger);
-            color: #fff;
+        .btn-red {
+            background: linear-gradient(45deg, var(--dark-red), var(--primary-red));
         }
 
-        .btn-danger:hover {
-            background: #d63031;
+        .btn-red:hover {
+            box-shadow: 0 0 15px var(--primary-red);
         }
 
-        .link-text {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 13px;
-        }
-
-        .link-text a {
-            color: var(--accent-color);
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .user-stats {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #21262d;
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .stat-box {
-            font-weight: bold;
-            color: var(--accent-color);
-        }
-
-        .nav-menu {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-            background: #0d1117;
-            padding: 10px;
+        /* Profile & Banner */
+        .profile-banner {
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(to right, var(--dark-blue), var(--dark-red));
             border-radius: 8px;
+            background-size: cover;
+            background-position: center;
         }
 
-        .nav-btn {
-            flex: 1;
-            min-width: 100px;
-            padding: 8px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            color: #fff;
-            border-radius: 4px;
-            cursor: pointer;
-            text-align: center;
-            font-size: 12px;
+        .profile-img {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 3px solid var(--primary-blue);
+            margin-top: -45px;
+            margin-right: 20px;
+            background: #222;
+            object-fit: cover;
         }
 
-        .nav-btn:hover, .nav-btn.active {
-            border-color: var(--accent-color);
-            color: var(--accent-color);
-        }
-
-        .rules-content {
-            background: #0d1117;
-            padding: 20px;
-            border-radius: 8px;
-            max-height: 350px;
-            overflow-y: auto;
-            white-space: pre-line;
-            font-size: 13px;
-            line-height: 1.6;
-            border: 1px solid var(--border-color);
-        }
-
+        /* Chat Section */
         .chat-box {
-            height: 200px;
-            background: #0d1117;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
+            height: 250px;
+            border: 1px solid rgba(255,255,255,0.1);
             overflow-y: auto;
             padding: 10px;
             margin-bottom: 10px;
+            border-radius: 6px;
+            background: rgba(0,0,0,0.2);
         }
 
-        .chat-msg {
-            margin-bottom: 8px;
-            font-size: 13px;
-        }
-
-        .chat-msg span {
-            color: var(--accent-color);
-            font-weight: bold;
-        }
-
-        .voice-status {
-            text-align: center;
-            padding: 30px;
-            border: 2px dashed var(--accent-color);
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-
-        .banned-screen {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 0, 0, 0.95);
-            color: #fff;
+        .voice-users {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 999;
-            text-align: center;
-            padding: 20px;
+            gap: 10px;
+            margin-top: 10px;
         }
+
+        .user-tag {
+            background: rgba(0, 210, 255, 0.2);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            border: 1px solid var(--primary-blue);
+        }
+
+        /* Hidden Sections */
+        .view-section { display: none; }
+        .active-view { display: block; }
     </style>
 </head>
 <body>
 
-<div class="app-container" id="app">
+    <!-- Header Navigation (تەنها دوای چوونەژوورەوە دەرەکەوێت) -->
+    <nav id="main-nav">
+        <h1>پلاتفۆرمی پرۆفیشناڵ</h1>
+        <div class="nav-btns">
+            <div class="coin-badge">💰 <span id="user-coins">0</span> دینار</div>
+            <button onclick="switchView('profile-section')">پڕۆفایل</button>
+            <button onclick="switchView('chat-section')">چات و ڤۆیس</button>
+            <button onclick="switchView('market-section')">بازاڕ و نایترۆ</button>
+            <button onclick="switchView('support-section')">پشتگیری و ڕاپۆرت</button>
+            <button onclick="switchView('owner-section')">بەشی تایبەت</button>
+            <button onclick="logout()" style="border-color: var(--primary-red); color: var(--primary-red);">دەربازبوون</button>
+        </div>
+    </nav>
 
-    <!-- Banned Screen -->
-    <div id="bannedScreen" class="banned-screen" style="display: none;">
-        <i class="fa-solid fa-ban fa-5x"></i>
-        <h1 style="margin-top: 20px;">ئەکاونتەکەت باند کرا!</h1>
-        <p>بەهۆی پێشێلکاری ئەمنی یان زانیاری هەڵە، ئەکاونتەکەت بە هەمیشەیی داخرا.</p>
-    </div>
+    <div class="container">
 
-    <!-- Timeout Alert -->
-    <div id="timeoutAlert" style="display:none; background: var(--accent-danger); color: white; padding: 10px; text-align: center;">
-        سیستەم تایم ئاوت کراوه! تکایە چاوەڕێ بکە...
-    </div>
+        <!-- AUTHENTICATION SECTION (تەنها ئەم بەشە دیارە پێش چوونەژوورەوە) -->
+        <div id="auth-section" class="view-section active-view card">
+            <h2>بەخێربێیت! تکایە داخڵ ببه یان ئەکاونت دروست بکە</h2>
+            <hr style="margin: 10px 0; border-color: rgba(255,255,255,0.1);">
 
-    <!-- LOGIN SECTION -->
-    <div id="loginSection" class="auth-card active">
-        <h2><i class="fa-solid fa-shield-halved"></i> چوونەژوورەوە</h2>
-        <div class="form-group">
-            <label>ژمارەی تەلەفۆن</label>
-            <input type="text" id="loginPhone" placeholder="07xxxxxxxx">
-        </div>
-        <div class="form-group">
-            <label>ئیمێڵ</label>
-            <input type="email" id="loginEmail" placeholder="example@domain.com">
-        </div>
-        <div class="form-group">
-            <label>پاسۆرد</label>
-            <input type="password" id="loginPassword" placeholder="******">
-        </div>
-        <button class="btn" onclick="handleLogin()">داخڵبوون</button>
-        
-        <div class="link-text">
-            <a onclick="showSection('forgotPassSection')">پاسۆردم لەبیرچووە؟</a> | 
-            <a onclick="showSection('registerSection')">ئەکاونتی تازە دروست بکە</a>
-        </div>
-    </div>
+            <!-- Login Form -->
+            <div id="login-box">
+                <h3>چوونەژوورەوە (Login)</h3>
+                <input type="email" id="login-email" placeholder="ئیمێڵ">
+                <input type="password" id="login-pass" placeholder="پاسۆرد">
+                <button class="btn" onclick="login()">داخڵبوون</button>
+                <p style="margin-top: 10px; font-size: 13px;">
+                    <a href="#" style="color: var(--primary-blue);" onclick="switchAuthMode('forget')">پاسۆردت لەبیرچووە؟</a> | 
+                    <a href="#" style="color: var(--primary-red);" onclick="switchAuthMode('register')">ئەکاونتی نوێ دروست بکە (Create Account)</a>
+                </p>
+            </div>
 
-    <!-- OTP VERIFICATION SECTION -->
-    <div id="otpSection" class="auth-card">
-        <h2><i class="fa-solid fa-key"></i> پشتڕاستکردنەوەی کۆد</h2>
-        <p style="text-align:center; font-size: 13px; margin-bottom: 15px;">کۆدی ئاسایشی نێردراو بنووسە:</p>
-        <div class="form-group">
-            <input type="password" id="otpInput" placeholder="****">
-        </div>
-        <button class="btn" onclick="verifyOTP()">پشتڕاستکردنەوە</button>
-        <button class="btn btn-danger" style="margin-top: 5px;" onclick="resendOTP()">دووبارە ناردنەوەی کۆد</button>
-    </div>
+            <!-- Register Form (Create Account) -->
+            <div id="register-box" style="display: none;">
+                <h3>دروستکردنی ئەکاونت (Create Account)</h3>
+                <input type="text" id="reg-user" placeholder="ناوی بەکارهێنەر (Username)">
+                <input type="email" id="reg-email" placeholder="ئیمێڵی ڕاستەقینە">
+                <input type="password" id="reg-pass" placeholder="پاسۆرد (نابێت تەنها ژمارە یان تەنها سیمبوڵ بێت)">
+                <button class="btn btn-red" onclick="register()">دروستکردنی ئەکاونت</button>
+                <p style="margin-top: 10px; font-size: 13px;">
+                    ئەکاونتت هەیە؟ <a href="#" style="color: var(--primary-blue);" onclick="switchAuthMode('login')">داخڵ ببه</a>
+                </p>
+            </div>
 
-    <!-- FORGOT PASSWORD SECTION -->
-    <div id="forgotPassSection" class="auth-card">
-        <h2><i class="fa-solid fa-lock-reset"></i> گۆڕینی پاسۆرد</h2>
-        <div class="form-group">
-            <label>ئیمێڵ</label>
-            <input type="email" id="fpEmail">
-        </div>
-        <div class="form-group">
-            <label>پاسۆردی کۆن</label>
-            <input type="password" id="fpOldPass">
-        </div>
-        <div class="form-group">
-            <label>پاسۆردی نوێ</label>
-            <input type="password" id="fpNewPass">
-        </div>
-        <button class="btn" onclick="handleForgotPassword()">تۆمارکردنی پاسۆردی نوێ</button>
-        <div class="link-text"><a onclick="showSection('loginSection')">گەڕانەوە بۆ داخڵبوون</a></div>
-    </div>
+            <!-- Verification Code Modal (تەنها بۆ بەشی Create Account) -->
+            <div id="verify-box" style="display: none; margin-top: 15px;">
+                <h4 style="color: var(--primary-blue);">کۆدی ئاسایشی ئیمێڵەکەت بنووسە:</h4>
+                <p style="font-size: 12px; color: #aaa; margin-bottom: 5px;">(کۆدی سەلماندن نێردرا بۆ ئیمێڵەکەت)</p>
+                <input type="text" id="verify-code" placeholder="کۆدی ٤ ژمارەیی">
+                <button class="btn" onclick="verifyAccount()">تەواوکردن و چوونەژوورەوەی ڕاستەوخۆ</button>
+            </div>
 
-    <!-- REGISTER SECTION -->
-    <div id="registerSection" class="auth-card">
-        <h2><i class="fa-solid fa-user-plus"></i> دروستکردنی ئەکاونت</h2>
-        <div class="form-group">
-            <label>ژمارەی تەلەفۆن</label>
-            <input type="text" id="regPhone" placeholder="07xxxxxxxx">
-        </div>
-        <div class="form-group">
-            <label>ئیمێڵ</label>
-            <input type="email" id="regEmail" placeholder="example@gmail.com">
-        </div>
-        <div class="form-group">
-            <label>پاسۆرد</label>
-            <input type="password" id="regPass" placeholder="لە 6 پیت کەمتر نەبێت">
-        </div>
-        <button class="btn" onclick="handleRegister()">تۆمارکردن (٥٠ دینار دیاری)</button>
-        <div class="link-text"><a onclick="showSection('loginSection')">ئەکاونتم هەیە، داخڵبوون</a></div>
-    </div>
-
-    <!-- DASHBOARD -->
-    <div id="dashboardSection" class="dashboard-section">
-        <div class="user-stats">
-            <div><i class="fa-solid fa-wallet"></i> باڵانس: <span id="userBalance" class="stat-box">0</span> دینار</div>
-            <div>
-                <button class="btn" style="padding: 5px 10px; margin: 0; font-size: 11px;" onclick="claimDailyBonus()">وەرگرتنی ٢٠ دیناری ڕۆژانە</button>
+            <!-- Forget Password Box -->
+            <div id="forget-box" style="display: none;">
+                <h3>گۆڕینی پاسۆرد (Forget Password)</h3>
+                <input type="password" id="old-pass" placeholder="پاسۆردی کۆن">
+                <input type="password" id="new-pass" placeholder="پاسۆردی تازە">
+                <button class="btn" onclick="changePassword()">نوێکردنەوەی پاسۆرد</button>
+                <p style="margin-top: 10px; font-size: 13px;">
+                    <a href="#" style="color: var(--primary-blue);" onclick="switchAuthMode('login')">گەڕانەوە بۆ چوونەژوورەوە</a>
+                </p>
             </div>
         </div>
 
-        <div class="nav-menu" style="margin-top: 15px;">
-            <button class="nav-btn active" onclick="showTab('rulesTab')">یاساکان</button>
-            <button class="nav-btn" onclick="showTab('chatTab')">چاتی گشتی</button>
-            <button class="nav-btn" onclick="showTab('voiceTab')">ڤۆیس</button>
-            <button class="nav-btn" onclick="showTab('supportTab')">پشتیوانی (Support)</button>
-            <button class="nav-btn" onclick="showTab('reportTab')">ڕاپۆرت (Report)</button>
-            <button class="nav-btn" style="border-color: var(--accent-warning);" onclick="showTab('ownAccountTab')">Own Account</button>
-            <button class="nav-btn" style="border-color: var(--accent-danger);" onclick="showTab('ownSupportTab')">Own Support</button>
+        <!-- 1. PROFILE SECTION -->
+        <div id="profile-section" class="view-section card">
+            <h2>پڕۆفایلی بەکارهێنەر</h2>
+            <div class="profile-banner" id="banner-preview"></div>
+            <img src="https://via.placeholder.com/90" id="avatar-preview" class="profile-img" alt="Profile">
+            
+            <div style="margin-top: 15px;">
+                <h3 id="prof-username">ناوی بەکارهێنەر</h3>
+                <p id="prof-bio" style="color: #aaa; margin-bottom: 10px;">بیۆگرافی لێرە دەردەکەوێت...</p>
+            </div>
+
+            <h4>دەستکاریکردنی پڕۆفایل</h4>
+            <input type="text" id="edit-username" placeholder="ناوی بەکارهێنەری نوێ">
+            <input type="text" id="edit-bio" placeholder="بیۆگرافی نوێ">
+            <label>وێنەی پڕۆفایل (URL):</label>
+            <input type="text" id="edit-avatar-url" placeholder="لینکی وێنە">
+            <label>وێنەی بانەر (URL):</label>
+            <input type="text" id="edit-banner-url" placeholder="لینکی بانەر">
+            <button class="btn" onclick="updateProfile()">سەیڤکردنی زانیارییەکان</button>
         </div>
 
-        <!-- TAB: RULES -->
-        <div id="rulesTab" class="tab-content">
-            <h3>📜 یاسا فەرمییەکانی سایبەر سکورێتی</h3>
-            <div class="rules-content">
-👑 یاسا فەرمییەکانی سایبەر سکورێتی| Official Rules 👑
+        <!-- 2. CHAT & VOICE SECTION -->
+        <div id="chat-section" class="view-section card">
+            <h2>چاتی گشتی و بەشی ڤۆیس</h2>
+            
+            <div class="chat-box" id="chat-messages">
+                <div><strong style="color: var(--primary-blue);">سیستەم:</strong> بەخێربێن بۆ چاتی گشتی!</div>
+            </div>
 
-🎩 سڵاو و ڕێز بۆ ئێوەی بەڕێز و خاوەن شکۆ،
-بەخێربێن بۆ "سایبەر سکۆرێتی کوردستا" (Kurdistan Cyper Security) — لوتکە و مەکۆی سەرەکی تەکنۆلۆژیا، ئاسایشی دیجیتاڵی، و پێگەیاندنی هاکەرە ئەخلاقییەکان (Ethical Hackers).
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="chat-input" placeholder="پەیامەکەت بنووسە...">
+                <button class="btn" style="width: 100px;" onclick="sendMessage()">ناردن</button>
+            </div>
+            
+            <div style="margin-top: 10px; display: flex; gap: 10px;">
+                <button class="btn btn-red" style="width: auto;" onclick="sendVoiceNote()">🎤 ناردنی دەنگ (Voice)</button>
+                <button class="btn" style="width: auto;" onclick="sendImage()">🖼️ ناردنی ڕەسم</button>
+            </div>
 
-1️⃣ ⚜️ ڕێزگرتن و پاراستنی شکۆ (Respect & Honor)
-2️⃣ 🛡️ هاکی ئەخلاقی و ئاسایشی نیشتمانی (Ethical Hacking)
-3️⃣ 🔗 بڵاوکردنەوەی فایلی زیانبەخش (No Malware & Dangerous Links)
-4️⃣ 🤫 پاراستنی تایبەتمەندی و دۆکسینگ (Anti-Doxing & Privacy)
-5️⃣ 🚫 قەدەغەکردنی ڕیکلام، سپام و تاگ (No Ads & No Spam)
-6️⃣ 💼 بازرگانی و مامەڵەی دارایی (No Unauthorized Trading)
-7️⃣ 📂 بەکارهێنانی چەناڵەکان (Channel Discipline)
-8️⃣ 🎙️ یاسای چاتە دەنگییەکان (Voice Channels Rules)
-9️⃣ 🎭 ناوی ئەندامان و پڕۆفایل (Nicknames & Profiles)
-🔟 🕊️ دوورکەوتنەوە لە بابەتە لاوەکییەکان (No Politics & Religion)
+            <hr style="margin: 20px 0; border-color: rgba(255,255,255,0.1);">
 
-✍️ Prepared by: KreKar
-🔥 Powered by Cyper Security
+            <h3>ڕوومە دەنگییەکان (Voice Channels)</h3>
+            <button class="btn" style="width: auto;" onclick="joinVoice()">جۆینکردنی ڤۆیس</button>
+            
+            <div style="margin-top: 10px;">
+                <h4>کەسەکانی ناو ڤۆیس:</h4>
+                <div class="voice-users" id="voice-users-list">
+                    <!-- Dynamic Voice Users -->
+                </div>
             </div>
-        </div>
 
-        <!-- TAB: CHAT -->
-        <div id="chatTab" class="tab-content" style="display:none;">
-            <h3>💬 چاتی گشتی</h3>
-            <div class="chat-box" id="chatBox">
-                <div class="chat-msg"><span>سیستەم:</span> بەخێربێن بۆ چاتی گشتی!</div>
-            </div>
-            <div style="display:flex; gap: 5px;">
-                <input type="text" id="chatInput" placeholder="پەیامێک بنووسە...">
-                <button class="btn" style="width: auto; margin:0;" onclick="sendMessage()">ناردن</button>
-            </div>
-        </div>
-
-        <!-- TAB: VOICE -->
-        <div id="voiceTab" class="tab-content" style="display:none;">
-            <h3>🎙️ بەشی چاتی دەنگی (Voice)</h3>
-            <div class="voice-status">
-                <i class="fa-solid fa-microphone-slash fa-3x" id="voiceIcon"></i>
-                <p id="voiceText" style="margin-top: 10px;">تۆ لە هیچ کەناڵێکی دەنگیدا نیت.</p>
-            </div>
-            <button class="btn" id="voiceBtn" onclick="toggleVoice()">بەشداریکردن لە ڤۆیس</button>
-        </div>
-
-        <!-- TAB: SUPPORT -->
-        <div id="supportTab" class="tab-content" style="display:none;">
-            <h3>🎧 بەشی پشتیوانی (Support)</h3>
-            <div class="form-group">
-                <label>ئیمێڵەکەت</label>
-                <input type="email" id="suppEmail" readonly>
-            </div>
-            <div class="form-group">
-                <label>هۆکار / کێشەکەت</label>
-                <textarea id="suppReason" rows="4" placeholder="کێشەکەت بە درێژی بنووسە..."></textarea>
-            </div>
-            <button class="btn" onclick="sendSupport()">ناردنی تیکێت</button>
-        </div>
-
-        <!-- TAB: REPORT -->
-        <div id="reportTab" class="tab-content" style="display:none;">
-            <h3>⚠️ بەشی ڕاپۆرت (Report)</h3>
-            <div class="form-group">
-                <label>ناوی بەکارهێنەر یان ئایدی سەرپێچیکار</label>
-                <input type="text" id="repTarget" placeholder="ناوی کەسەکە">
-            </div>
-            <div class="form-group">
-                <label>هۆکاری ڕاپۆرت</label>
-                <textarea id="repReason" rows="4" placeholder="تەواوی سەرپێچییەکە بنووسە..."></textarea>
-            </div>
-            <button class="btn btn-danger" onclick="sendReport()">ناردنی ڕاپۆرت</button>
-        </div>
-
-        <!-- TAB: OWN ACCOUNT -->
-        <div id="ownAccountTab" class="tab-content" style="display:none;">
-            <h3>🔐 Own Account Section</h3>
-            <div id="ownAccAuth">
-                <p style="margin-bottom: 10px;">تکایە کۆدی تایبەت بنووسە بۆ چوونەژوورەوە:</p>
-                <input type="password" id="ownAccCode" placeholder="کۆد بنووسە">
-                <button class="btn" onclick="checkOwnAccCode()">داخڵبوون</button>
-            </div>
-            <div id="ownAccContent" style="display: none;">
-                <h4>زانیارییە کەسییەکانت:</h4>
-                <div style="background:#0d1117; padding: 15px; border-radius:6px; margin-top: 10px;" id="ownAccDetails"></div>
-            </div>
-        </div>
-
-        <!-- TAB: OWN SUPPORT -->
-        <div id="ownSupportTab" class="tab-content" style="display:none;">
-            <h3>🛡️ Admin Own Support Box</h3>
-            <div id="ownSuppAuth">
-                <p style="margin-bottom: 10px;">کۆدی تایبەتی بەڕێوەبەرایەتی بنووسە:</p>
-                <input type="password" id="ownSuppCode" placeholder="کۆدی ئادمیین">
-                <button class="btn" onclick="checkOwnSuppCode()">داخڵبوون</button>
-            </div>
-            <div id="ownSuppContent" style="display: none;">
-                <h4>لیستی Support & Report های هاتووە:</h4>
-                <div id="adminSupportList" style="margin-top: 10px;">
-                    <p style="font-size: 12px; color: #888;">هیچ پشتیوانی یان ڕاپۆرتێک نییە.</p>
+            <!-- Admin Controls -->
+            <div style="margin-top: 20px; background: rgba(255,0,85,0.1); padding: 15px; border-radius: 8px;">
+                <h4 style="color: var(--primary-red);">ئامرازەکانی بەڕێوەبەر:</h4>
+                <div style="display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap;">
+                    <button class="btn btn-red" style="width:auto;" onclick="adminAction('Mute')">Mute</button>
+                    <button class="btn btn-red" style="width:auto;" onclick="adminAction('Unmute')">Unmute</button>
+                    <button class="btn btn-red" style="width:auto;" onclick="adminAction('Timeout')">Timeout</button>
+                    <button class="btn btn-red" style="width:auto;" onclick="adminAction('Kick')">Kick</button>
+                    <button class="btn btn-red" style="width:auto;" onclick="adminAction('Ban')">Ban</button>
                 </div>
             </div>
         </div>
 
+        <!-- 3. MARKET & DAILY REWARD & NITRO SECTION -->
+        <div id="market-section" class="view-section card">
+            <h2>بازاڕ و کۆکردنەوەی کۆین و نایترۆ</h2>
+
+            <!-- Daily Reward -->
+            <div style="background: rgba(0,210,255,0.1); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <h3>دیاری ڕۆژانە (Daily Reward)</h3>
+                <p>هەموو ڕۆژێک کاتژمێر 8:00ی بەیانی دەتوانیت ٥٠٠ دینار بۆ هەژمارەکەت وەربگریت.</p>
+                <button class="btn" onclick="claimDailyReward()">وەرگرتنی ٥٠٠ دینار 💰</button>
+                <p id="reward-status" style="margin-top: 5px; color: var(--primary-blue);"></p>
+            </div>
+
+            <!-- Server Creation & Boost -->
+            <h3>کڕینی سێرڤەر و بووست</h3>
+            <p>سێرڤەر دروست بکە و جەناڵ و ڕۆڵ بەڕێوەبەرە:</p>
+            <input type="text" id="server-name" placeholder="ناوی سێرڤەر">
+            <button class="btn" onclick="createCustomServer()">دروستکردنی سێرڤەر</button>
+            <button class="btn btn-red" onclick="boostServer()">بووستکردنی سێرڤەر (Boost)</button>
+
+            <div id="custom-server-panel" style="display:none; margin-top: 15px; padding: 10px; border: 1px solid var(--primary-blue);">
+                <h4>بەڕێوەبردنی سێرڤەرەکەت</h4>
+                <input type="text" id="role-name" placeholder="ناوی ڕۆڵ (Role)">
+                <button class="btn" onclick="alert('ڕۆڵ دروستکرا!')">دروستکردنی ڕۆڵ</button>
+                <input type="text" id="channel-name" placeholder="ناوی چەناڵ / ڤۆیس">
+                <button class="btn" onclick="alert('چەناڵ دروستکرا!')">دروستکردنی چەناڵ/ڤۆیس</button>
+            </div>
+
+            <hr style="margin: 20px 0; border-color: rgba(255,255,255,0.1);">
+
+            <!-- Nitro Store -->
+            <h3>کاڵای نایترۆ (Nitro Store)</h3>
+            <div style="display: flex; gap: 15px; margin-top: 10px; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 200px; border: 1px solid var(--primary-blue); padding: 15px; border-radius: 8px; text-align: center;">
+                    <h4>نایترۆی مانگانە</h4>
+                    <p style="font-size: 20px; color: var(--primary-blue); margin: 10px 0;">١,٨٠٠ دینار</p>
+                    <button class="btn" onclick="buyNitro('Monthly', 1800)">کڕین بە کۆین</button>
+                </div>
+                <div style="flex: 1; min-width: 200px; border: 1px solid var(--primary-red); padding: 15px; border-radius: 8px; text-align: center;">
+                    <h4>نایترۆی ساڵانە</h4>
+                    <p style="font-size: 20px; color: var(--primary-red); margin: 10px 0;">١٥,٠٠٠ دینار</p>
+                    <button class="btn btn-red" onclick="buyNitro('Yearly', 15000)">کڕین بە کۆین</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. SUPPORT & REPORT SECTION -->
+        <div id="support-section" class="view-section card">
+            <h2>پشتگیری & ڕاپۆرت</h2>
+
+            <!-- Support -->
+            <div style="margin-bottom: 20px;">
+                <h3>بەشی پشتیوانی (Support)</h3>
+                <input type="text" id="supp-name" placeholder="ناوی تۆ">
+                <textarea id="supp-reason" placeholder="هۆکارەکە بنووسە..."></textarea>
+                <button class="btn" onclick="submitSupport()">ناردن بۆ Support</button>
+            </div>
+
+            <hr style="margin: 20px 0; border-color: rgba(255,255,255,0.1);">
+
+            <!-- Report -->
+            <div>
+                <h3>بەشی ڕاپۆرت (Report)</h3>
+                <input type="text" id="rep-target" placeholder="ناوی ئەو کەسەی ڕاپۆرتی لەسەر دەدەیت">
+                <textarea id="rep-reason" placeholder="هۆکاری ڕاپۆرت..."></textarea>
+                <label>وێنەی بەڵگە (Proof Image URL):</label>
+                <input type="text" id="rep-proof" placeholder="لینکی وێنەی بەڵگە">
+                <button class="btn btn-red" onclick="submitReport()">ناردنی ڕاپۆرت</button>
+            </div>
+        </div>
+
+        <!-- 5. OWNER SECTION (شاراوە لەبەرچاوان) -->
+        <div id="owner-section" class="view-section card">
+            <h2>بەشی تایبەت</h2>
+            
+            <div id="owner-login-box">
+                <p>کۆدی تایبەت ببنوسە بۆ چوونەژوورەوە:</p>
+                <input type="password" id="owner-pin" placeholder="****">
+                <button class="btn btn-red" onclick="accessOwnerPanel()">پشکنین</button>
+            </div>
+
+            <!-- Secret Owner Content -->
+            <div id="owner-content" style="display: none; margin-top: 20px;">
+                <h3 style="color: var(--primary-blue);">بەخێربێیت بەڕێوەبەر!</h3>
+                <br>
+                
+                <h4>1. Own Support Panel:</h4>
+                <div id="own-support-list" style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px; min-height: 50px; margin-bottom: 15px;"></div>
+
+                <h4>2. Report Own Panel:</h4>
+                <div id="own-report-list" style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px; min-height: 50px; margin-bottom: 15px;"></div>
+
+                <h4>3. Own Account Database:</h4>
+                <div id="own-account-list" style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px; min-height: 50px;"></div>
+            </div>
+        </div>
+
     </div>
-</div>
 
-<script>
-    // System Databases
-    let db = { users: {}, supportTickets: [] };
-    let currentUser = null;
-    let failedPassAttempts = 0;
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Data Stores
+        let failedAttempts = 0;
+        let isBanned = false;
+        let generatedCode = null;
+        let currentUser = null;
+        let userCoins = 0;
 
-    // Encrypted Hashes of secret keys (Code numbers hidden from source code)
-    const HASHES = {
-        otp: "81dc9bdb52d04dc20036dbd8313ed055",          // Hash of 1234
-        ownAcc: "6f52de2d8db12502eb868018e6e5eb98",       // Hash of 33/44
-        ownSupp1: "e4453e07086055d7889ff07d12234032",     // Hash of 2233
-        ownSupp2: "aa397738f6575990263385202ed6ef69"      // Hash of 4455
-    };
-
-    // Helper Function: Simple Crypto MD5-like hashing algorithm for frontend protection
-    function hashString(str) {
-        let hash = 0;
-        for (let i = 0; i < str.length; i++) {
-            let char = str.charCodeAt(i);
-            hash = ((hash << 5) - hash) + char;
-            hash |= 0;
-        }
-        // Custom transformation matching the hashes above
-        let hex = Math.abs(hash).toString(16);
-        while(hex.length < 32) { hex = '0' + hex; }
-        return hex;
-    }
-
-    // Direct String Hash Check Helper (Secured comparison)
-    function checkHash(inputStr, type) {
-        // Obfuscated string checks to completely hide keys from plaintext
-        if (type === 'otp' && inputStr === "1234") return true;
-        if (type === 'ownAcc' && inputStr === "33/44") return true;
-        if (type === 'ownSupp' && (inputStr === "2233" || inputStr === "4455")) return true;
-        return false;
-    }
-
-    const fakeEmails = ['fake@gmail.com', 'test@test.com', 'admin@admin.com'];
-
-    function showSection(sectionId) {
-        document.querySelectorAll('.auth-card, .dashboard-section').forEach(el => el.classList.remove('active'));
-        document.getElementById(sectionId).classList.add('active');
-    }
-
-    function showTab(tabId) {
-        document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
-        document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-        document.getElementById(tabId).style.display = 'block';
-    }
-
-    // --- REGISTER SYSTEM ---
-    function handleRegister() {
-        const phone = document.getElementById('regPhone').value;
-        const email = document.getElementById('regEmail').value;
-        const pass = document.getElementById('regPass').value;
-
-        if(!phone || phone.length < 10) { alert('ژمارەی تەلەفۆن هەڵەیە!'); return; }
-        if(!email.includes('@') || fakeEmails.includes(email)) {
-            alert('ئیمێڵی فەیک بەکارهاتووە! ئەکاونتەکەت ئۆتۆماتیکی سزادەدرێت.');
-            triggerBan();
-            return;
-        }
-        if(pass.length < 6 || pass === "123456" || pass === "password") {
-            alert('پاسۆردی فەیک/لاواز بژاردەیەکی باش نییە!');
-            return;
-        }
-
-        db.users[email] = {
-            phone: phone,
-            email: email,
-            pass: pass,
-            balance: 50,
-            lastClaim: null
+        const db = {
+            accounts: [],
+            supports: [],
+            reports: []
         };
 
-        alert('ئەکاونتەکەت بە سەرکەوتوویی دروستکرا! ٥٠ دینار دیاریت وەرگرت.');
-        showSection('loginSection');
-    }
-
-    // --- LOGIN SYSTEM ---
-    function handleLogin() {
-        const email = document.getElementById('loginEmail').value;
-        const pass = document.getElementById('loginPassword').value;
-        const user = db.users[email];
-
-        if (!user) {
-            alert('ئیمێڵ هەڵەیە! بۆ ماوەی ۱۰ دەقە سیستمەکەت بلۆک کراوە.');
-            applyTimeout(600);
-            return;
-        }
-
-        if (user.pass !== pass) {
-            failedPassAttempts++;
-            if (failedPassAttempts >= 3) {
-                alert('سێ جار پاسۆردت هەڵە لێدا! سیستمەکەت بۆ ۲ دەقە تایم ئاوت کراوە.');
-                failedPassAttempts = 0;
-                applyTimeout(120);
-            } else {
-                alert(`پاسۆرد هەڵەیە! تەنها ${3 - failedPassAttempts} هەوڵت ماوە.`);
+        // Navigation Switcher
+        function switchView(viewId) {
+            if (!currentUser && viewId !== 'auth-section') {
+                alert("تکایە پێشتر داخڵی ئەکاونت ببە!");
+                return;
             }
-            return;
+            const views = document.querySelectorAll('.view-section');
+            views.forEach(v => v.classList.remove('active-view'));
+            document.getElementById(viewId).classList.add('active-view');
         }
 
-        failedPassAttempts = 0;
-        currentUser = user;
-        showSection('otpSection');
-    }
-
-    function verifyOTP() {
-        const otp = document.getElementById('otpInput').value;
-        if(checkHash(otp, 'otp')) {
-            alert('داخڵبوون سەرکەوتوو بوو!');
-            openDashboard();
-        } else {
-            alert('کۆدەکە هەڵەیە!');
-        }
-    }
-
-    function resendOTP() {
-        alert('کۆدی ئاسایشی نوێ نێردرا.');
-    }
-
-    // --- FORGOT PASSWORD SYSTEM ---
-    function handleForgotPassword() {
-        const email = document.getElementById('fpEmail').value;
-        const oldPass = document.getElementById('fpOldPass').value;
-        const newPass = document.getElementById('fpNewPass').value;
-
-        const user = db.users[email];
-
-        if(!user || user.pass !== oldPass) {
-            alert('پاسۆردی کۆن هەڵەیە! بەهۆی هۆکاری ئەمنی ئەکاونتەکەت یەکسەر باند کرا!');
-            triggerBan();
-            return;
+        function switchAuthMode(mode) {
+            document.getElementById('login-box').style.display = mode === 'login' ? 'block' : 'none';
+            document.getElementById('register-box').style.display = mode === 'register' ? 'block' : 'none';
+            document.getElementById('forget-box').style.display = mode === 'forget' ? 'block' : 'none';
+            document.getElementById('verify-box').style.display = 'none';
         }
 
-        user.pass = newPass;
-        alert('پاسۆردەکەت بە سەرکەوتوویی گۆڕدرا!');
-        showSection('loginSection');
-    }
+        // Create Account & Validation Logic
+        function register() {
+            if(isBanned) {
+                alert("ئەم ئامێرە/ئەکاونتە باندکراوە بەهۆی هەوڵی نادروست!");
+                return;
+            }
 
-    function openDashboard() {
-        showSection('dashboardSection');
-        document.getElementById('userBalance').innerText = currentUser.balance;
-        document.getElementById('suppEmail').value = currentUser.email;
-    }
+            const username = document.getElementById('reg-user').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-pass').value;
 
-    function claimDailyBonus() {
-        const today = new Date().toDateString();
-        if(currentUser.lastClaim === today) {
-            alert('تۆ پێشتر پاداشتی ئەمڕۆت وەرگرتووە!');
-        } else {
-            currentUser.balance += 20;
-            currentUser.lastClaim = today;
-            document.getElementById('userBalance').innerText = currentUser.balance;
-            alert('٢٠ دیناری ڕۆژانە زێدە کرا بۆ باڵانسەکەت!');
-        }
-    }
+            if(!username || !email || !password) {
+                alert("تکایە هەموو بەشەکان پڕبکەرەوە!");
+                return;
+            }
 
-    function applyTimeout(seconds) {
-        const alertBox = document.getElementById('timeoutAlert');
-        alertBox.style.display = 'block';
-        document.querySelectorAll('button').forEach(btn => btn.disabled = true);
+            // Password Validation: Reject Only Numbers or Only Symbols
+            const isOnlyNumbers = /^\d+$/.test(password);
+            const isOnlySymbols = /^[^a-zA-Z0-9]+$/.test(password);
 
-        setTimeout(() => {
-            alertBox.style.display = 'none';
-            document.querySelectorAll('button').forEach(btn => btn.disabled = false);
-        }, seconds * 1000);
-    }
+            if(isOnlyNumbers) {
+                alert("پاسۆردی ژمارە قبوڵ ناکرێت! دەبێت پیت و سیمبوڵیشی تێدا بێت.");
+                return;
+            }
+            if(isOnlySymbols) {
+                alert("پاسۆردەکە هەمووی سیمبوڵە! قبوڵ ناکرێت.");
+                return;
+            }
 
-    function triggerBan() {
-        document.getElementById('bannedScreen').style.display = 'flex';
-    }
+            // Fake Email Detection Logic
+            const fakeDomains = ['fake.com', 'temp.com', 'mailinator.com', 'dispostable.com'];
+            const domain = email.split('@')[1];
 
-    function sendMessage() {
-        const txt = document.getElementById('chatInput').value;
-        if(!txt) return;
-        const chatBox = document.getElementById('chatBox');
-        chatBox.innerHTML += `<div class="chat-msg"><span>${currentUser ? currentUser.email.split('@')[0] : 'ئەندام'}:</span> ${txt}</div>`;
-        document.getElementById('chatInput').value = '';
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
+            if(!email.includes('@') || fakeDomains.includes(domain)) {
+                failedAttempts++;
+                alert(`ئیمێڵەکە فەیكە یان هەڵەیە! ئاگاداربە (${failedAttempts}/5)`);
+                
+                if(failedAttempts >= 5) {
+                    isBanned = true;
+                    alert("ئەکاونتەکەت بۆ هەتا هەتایە باند کرا بەهۆی ٥ جار هەوڵدانی فەیک!");
+                }
+                return;
+            }
 
-    let inVoice = false;
-    function toggleVoice() {
-        inVoice = !inVoice;
-        const btn = document.getElementById('voiceBtn');
-        const txt = document.getElementById('voiceText');
-        const icon = document.getElementById('voiceIcon');
+            // Generate Security Verification Code for Create Account
+            generatedCode = Math.floor(1000 + Math.random() * 9000);
+            alert(`کۆدی ئاسایشی سەر ئیمێڵەکەت (سیمولەیشن): ${generatedCode}`);
+            
+            document.getElementById('register-box').style.display = 'none';
+            document.getElementById('verify-box').style.display = 'block';
 
-        if(inVoice) {
-            btn.innerText = "دەرچوون لە ڤۆیس";
-            btn.classList.add('btn-danger');
-            txt.innerText = "تۆ لەناو ژووری دەنگیدایت... (مایکت چالاکە)";
-            icon.className = "fa-solid fa-microphone fa-3x";
-            icon.style.color = "var(--accent-color)";
-        } else {
-            btn.innerText = "بەشداریکردن لە ڤۆیس";
-            btn.classList.remove('btn-danger');
-            txt.innerText = "تۆ لە هیچ کەناڵێکی دەنگیدا نیت.";
-            icon.className = "fa-solid fa-microphone-slash fa-3x";
-            icon.style.color = "inherit";
-        }
-    }
-
-    function sendSupport() {
-        const reason = document.getElementById('suppReason').value;
-        if(!reason) return alert('تکایە هۆکار بنووسە!');
-        
-        db.supportTickets.push({ type: 'SUPPORT', email: currentUser.email, reason: reason });
-        alert('تیکێتی پشتیوانی نێردرا بە سەرکەوتوویی!');
-        document.getElementById('suppReason').value = '';
-        updateAdminSupportList();
-    }
-
-    function sendReport() {
-        const target = document.getElementById('repTarget').value;
-        const reason = document.getElementById('repReason').value;
-        if(!target || !reason) return alert('تکایە هەموو بەشەکان پڕبکەرەوە!');
-
-        db.supportTickets.push({ type: 'REPORT', email: currentUser.email, target: target, reason: reason });
-        alert('ڕاپۆرتەکەت ڕاستەوخۆ نێردرا بۆ Own Support!');
-        document.getElementById('repTarget').value = '';
-        document.getElementById('repReason').value = '';
-        updateAdminSupportList();
-    }
-
-    // Hidden validation for Own Account
-    function checkOwnAccCode() {
-        const code = document.getElementById('ownAccCode').value;
-        if(checkHash(code, 'ownAcc')) {
-            document.getElementById('ownAccAuth').style.display = 'none';
-            document.getElementById('ownAccContent').style.display = 'block';
-            document.getElementById('ownAccDetails').innerHTML = `
-                <p><b>ئیمێڵ:</b> ${currentUser.email}</p>
-                <p><b>ڕەقەم تەلەفۆن:</b> ${currentUser.phone}</p>
-                <p><b>پاسۆرد:</b> ${currentUser.pass}</p>
-                <p><b>باڵانس:</b> ${currentUser.balance} دینار</p>
-            `;
-        } else {
-            alert('کۆدەکە هەڵەیە!');
-        }
-    }
-
-    // Hidden validation for Own Support
-    function checkOwnSuppCode() {
-        const code = document.getElementById('ownSuppCode').value;
-        if(checkHash(code, 'ownSupp')) {
-            document.getElementById('ownSuppAuth').style.display = 'none';
-            document.getElementById('ownSuppContent').style.display = 'block';
-            updateAdminSupportList();
-        } else {
-            alert('کۆدی ئادمیین هەڵەیە!');
-        }
-    }
-
-    function updateAdminSupportList() {
-        const listContainer = document.getElementById('adminSupportList');
-        if(db.supportTickets.length === 0) {
-            listContainer.innerHTML = `<p style="font-size: 12px; color: #888;">هیچ پشتیوانی یان ڕاپۆرتێک نییە.</p>`;
-            return;
+            currentUser = { username, email, password, coins: 0, avatar: '', banner: '', bio: '' };
         }
 
-        listContainer.innerHTML = '';
-        db.supportTickets.forEach((t) => {
-            listContainer.innerHTML += `
-                <div style="background:#0d1117; padding:10px; margin-bottom:10px; border-radius:5px; border-right: 3px solid ${t.type === 'REPORT' ? 'red' : 'green'};">
-                    <span style="font-size:10px; background:#222; padding:2px 5px; border-radius:3px;">${t.type}</span>
-                    <p style="font-size:12px; margin-top:5px;"><b>نێرەر:</b> ${t.email}</p>
-                    ${t.target ? `<p style="font-size:12px;"><b>ئامانج:</b> ${t.target}</p>` : ''}
-                    <p style="font-size:12px;"><b>هۆکار:</b> ${t.reason}</p>
-                </div>
-            `;
-        });
-    }
-</script>
+        function verifyAccount() {
+            const inputCode = document.getElementById('verify-code').value;
+            if(inputCode == generatedCode) {
+                alert("ئەکاونتەکەت بە سەرکەوتوویی دروستکرا!");
+                db.accounts.push(currentUser);
+                
+                // Direct Entry to the platform
+                enterPlatform();
+            } else {
+                alert("کۆدەکە هەڵەیە!");
+            }
+        }
 
+        // Login Logic
+        function login() {
+            if(isBanned) {
+                alert("تۆ باند کراویت!");
+                return;
+            }
+
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-pass').value;
+
+            const user = db.accounts.find(a => a.email === email && a.password === pass);
+
+            if(user) {
+                currentUser = user;
+                alert("بە سەرکەوتوویی چوویە ژوورەوە!");
+                enterPlatform();
+            } else {
+                alert("ئیمێڵ یان پاسۆرد هەڵەیە! (تێبینی: پێویستە سەرەتا ئەکاونت دروست بکەیت)");
+            }
+        }
+
+        function enterPlatform() {
+            document.getElementById('main-nav').style.display = 'flex';
+            document.getElementById('prof-username').innerText = currentUser.username;
+            updateCoinDisplay();
+            switchView('profile-section');
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('main-nav').style.display = 'none';
+            switchAuthMode('login');
+            switchView('auth-section');
+        }
+
+        // Forget Password Logic
+        function changePassword() {
+            const oldP = document.getElementById('old-pass').value;
+            const newP = document.getElementById('new-pass').value;
+
+            if(currentUser && currentUser.password === oldP) {
+                currentUser.password = newP;
+                alert("پاسۆردەکەت بە سەرکەوتوویی گۆڕدرا!");
+                switchAuthMode('login');
+            } else {
+                alert("پاسۆردی کۆن هەڵەیە!");
+            }
+        }
+
+        // Profile Management
+        function updateProfile() {
+            const name = document.getElementById('edit-username').value;
+            const bio = document.getElementById('edit-bio').value;
+            const avatar = document.getElementById('edit-avatar-url').value;
+            const banner = document.getElementById('edit-banner-url').value;
+
+            if(name) { currentUser.username = name; document.getElementById('prof-username').innerText = name; }
+            if(bio) { currentUser.bio = bio; document.getElementById('prof-bio').innerText = bio; }
+            if(avatar) { currentUser.avatar = avatar; document.getElementById('avatar-preview').src = avatar; }
+            if(banner) { currentUser.banner = banner; document.getElementById('banner-preview').style.backgroundImage = `url('${banner}')`; }
+
+            alert("پڕۆفایل نوێکرایەوە!");
+        }
+
+        // Chat & Voice Logic
+        function sendMessage() {
+            const txt = document.getElementById('chat-input').value;
+            if(txt.trim() !== '') {
+                const box = document.getElementById('chat-messages');
+                box.innerHTML += `<div><strong>${currentUser.username}:</strong> ${txt}</div>`;
+                document.getElementById('chat-input').value = '';
+                box.scrollTop = box.scrollHeight;
+            }
+        }
+
+        function sendVoiceNote() {
+            const box = document.getElementById('chat-messages');
+            box.innerHTML += `<div><strong>${currentUser.username}:</strong> 🎙️ [پەیامی دەنگی - Voice Note 0:05]</div>`;
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function sendImage() {
+            const url = prompt("لینکی ڕەسم بنووسە:");
+            if(url) {
+                const box = document.getElementById('chat-messages');
+                box.innerHTML += `<div><strong>${currentUser.username}:</strong> <br><img src="${url}" style="max-width:150px; border-radius:5px;"></div>`;
+                box.scrollTop = box.scrollHeight;
+            }
+        }
+
+        function joinVoice() {
+            const list = document.getElementById('voice-users-list');
+            list.innerHTML += `<span class="user-tag">🟢 ${currentUser.username}</span>`;
+            alert("تۆ جۆینی بەشی دەنگی بوویت!");
+        }
+
+        function adminAction(action) {
+            alert(`کرداری ${action} بە سەرکەوتوویی ئەنجامدرا!`);
+        }
+
+        // Daily Reward System
+        function claimDailyReward() {
+            const now = new Date();
+            const hours = now.getHours();
+
+            if (hours >= 8) {
+                currentUser.coins = (currentUser.coins || 0) + 500;
+                updateCoinDisplay();
+                document.getElementById('reward-status').innerText = "بڕی ٥٠٠ دینار زیادکرا بۆ ئامێری دارایت!";
+            } else {
+                document.getElementById('reward-status').innerText = "تکایە کاتژمێر ٨:٠٠ی بەیانی وەرە بۆ وەرگرتنی دیاری.";
+            }
+        }
+
+        function updateCoinDisplay() {
+            document.getElementById('user-coins').innerText = currentUser ? currentUser.coins : 0;
+        }
+
+        // Server & Nitro Systems
+        function createCustomServer() {
+            const sName = document.getElementById('server-name').value;
+            if(sName) {
+                alert(`سێرڤەری (${sName}) بە سەرکەوتوویی دروستکرا!`);
+                document.getElementById('custom-server-panel').style.display = 'block';
+            }
+        }
+
+        function boostServer() {
+            alert("سێرڤەرەکەت بووست (Boost) کراو بەکەوتوویی!");
+        }
+
+        function buyNitro(plan, price) {
+            if((currentUser.coins || 0) >= price) {
+                currentUser.coins -= price;
+                updateCoinDisplay();
+                alert(`تۆ نایترۆی ${plan}ت کڕی بە سەرکەوتوویی!`);
+            } else {
+                alert(`کۆینی پێویستت نییە! نرخەکە ${price} دینارە، بەڵام تۆ ${currentUser.coins || 0} دینارت هەیە.`);
+            }
+        }
+
+        // Support & Report Systems
+        function submitSupport() {
+            const name = document.getElementById('supp-name').value;
+            const reason = document.getElementById('supp-reason').value;
+
+            if(name && reason) {
+                db.supports.push({ name, reason });
+                alert("داواکاری پشتیوانی نێردرا!");
+                document.getElementById('supp-name').value = '';
+                document.getElementById('supp-reason').value = '';
+            }
+        }
+
+        function submitReport() {
+            const target = document.getElementById('rep-target').value;
+            const reason = document.getElementById('rep-reason').value;
+            const proof = document.getElementById('rep-proof').value;
+
+            if(target && reason) {
+                db.reports.push({ target, reason, proof });
+                alert("ڕاپۆرتەکە نێردرا!");
+                document.getElementById('rep-target').value = '';
+                document.getElementById('rep-reason').value = '';
+                document.getElementById('rep-proof').value = '';
+            }
+        }
+
+        // Owner Access Logic (Protected PIN)
+        function accessOwnerPanel() {
+            const pin = document.getElementById('owner-pin').value;
+            if(pin === "1122") {
+                document.getElementById('owner-login-box').style.display = 'none';
+                document.getElementById('owner-content').style.display = 'block';
+
+                // Render Own Support Panel
+                const suppContainer = document.getElementById('own-support-list');
+                suppContainer.innerHTML = db.supports.length ? '' : 'هیچ پشتیوانییەک نییە.';
+                db.supports.forEach(s => {
+                    suppContainer.innerHTML += `<p><strong>کەس:</strong> ${s.name} | <strong>هۆکار:</strong> ${s.reason}</p>`;
+                });
+
+                // Render Report Own Panel
+                const repContainer = document.getElementById('own-report-list');
+                repContainer.innerHTML = db.reports.length ? '' : 'هیچ ڕاپۆرتێک نییە.';
+                db.reports.forEach(r => {
+                    repContainer.innerHTML += `<p><strong>داواکار:</strong> ${r.target} | <strong>هۆکار:</strong> ${r.reason} | <strong>بەڵگە:</strong> ${r.proof}</p>`;
+                });
+
+                // Render Own Account Database
+                const accContainer = document.getElementById('own-account-list');
+                accContainer.innerHTML = db.accounts.length ? '' : 'هیچ ئەکاونتێک تۆمار نەکراوە.';
+                db.accounts.forEach(a => {
+                    accContainer.innerHTML += `<p><strong>User:</strong> ${a.username} | <strong>Email:</strong> ${a.email} | <strong>Pass:</strong> ${a.password} | <strong>Coins:</strong> ${a.coins}</p>`;
+                });
+
+            } else {
+                alert("کۆدی تایبەت هەڵەیە!");
+            }
+        }
+    </script>
 </body>
 </html>
